@@ -1,0 +1,439 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 240 10% 3.9%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 3.9%;
+    --card-background: 240 5% 98%;
+ 
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 3.9%;
+ 
+    --primary: 240 5.9% 10%;
+    --primary-foreground: 0 0% 98%;
+ 
+    --secondary: 240 4.8% 95.9%;
+    --secondary-foreground: 240 5.9% 10%;
+ 
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
+ 
+    --accent: 240 4.8% 95.9%;
+    --accent-foreground: 240 5.9% 10%;
+ 
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 240 5.9% 90%;
+    --input: 240 5.9% 90%;
+    --ring: 240 5.9% 10%;
+ 
+    --radius: 0.75rem;
+ 
+    --sidebar-background: 0 0% 98%;
+ 
+    --sidebar-foreground: 240 5.3% 26.1%;
+ 
+    --sidebar-primary: 240 5.9% 10%;
+ 
+    --sidebar-primary-foreground: 0 0% 98%;
+ 
+    --sidebar-accent: 240 4.8% 95.9%;
+ 
+    --sidebar-accent-foreground: 240 5.9% 10%;
+ 
+    --sidebar-border: 220 13% 91%;
+ 
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+ 
+  .dark {
+    --background: 240 10% 3.9%;
+    --foreground: 0 0% 98%;
+ 
+    --card: 240 10% 3.9%;
+    --card-foreground: 0 0% 98%;
+    --card-background: 240 10% 5%;
+ 
+    --popover: 240 10% 3.9%;
+    --popover-foreground: 0 0% 98%;
+ 
+    --primary: 0 0% 98%;
+    --primary-foreground: 240 5.9% 10%;
+ 
+    --secondary: 240 3.7% 15.9%;
+    --secondary-foreground: 0 0% 98%;
+ 
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;
+ 
+    --accent: 240 3.7% 15.9%;
+    --accent-foreground: 0 0% 98%;
+ 
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+ 
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
+    --ring: 240 4.9% 83.9%;
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground antialiased;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-medium tracking-tight;
+  }
+}
+
+@layer components {
+  .input-clean {
+    @apply h-10 px-3 rounded-md border transition-colors
+    focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary
+    focus-visible:border-primary;
+  }
+  
+  .button-clean {
+    @apply rounded-md font-medium transition-colors;
+  }
+
+  .button-airbnb {
+    @apply transition-all duration-300 hover:shadow-md active:scale-95;
+  }
+
+  .card-clean {
+    @apply rounded-lg border shadow-sm;
+  }
+
+  .card-elevated {
+    @apply bg-[hsl(var(--card-background))] border rounded-xl shadow-sm 
+    transition-all duration-300 hover:shadow-md;
+  }
+
+  .sidebar-link {
+    @apply flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground 
+    transition-all hover:text-foreground hover:bg-muted;
+  }
+
+  .sidebar-link.active {
+    @apply bg-muted text-foreground;
+  }
+
+  .badge {
+    @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium 
+    transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2;
+  }
+
+  .table-row-hover {
+    @apply hover:bg-muted/50 transition-colors cursor-pointer;
+  }
+
+  .form-section {
+    @apply space-y-6 p-6 bg-[hsl(var(--card-background))] rounded-xl border shadow-sm;
+  }
+
+  .form-group {
+    @apply space-y-4;
+  }
+
+  .form-row {
+    @apply grid grid-cols-1 md:grid-cols-2 gap-6;
+  }
+
+  .form-label {
+    @apply text-sm font-medium leading-none peer-disabled:cursor-not-allowed 
+    peer-disabled:opacity-70;
+  }
+
+  .form-input {
+    @apply flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 
+    text-sm ring-offset-background file:border-0 file:bg-transparent 
+    file:text-sm file:font-medium placeholder:text-muted-foreground 
+    focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring 
+    focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50;
+  }
+
+  .form-textarea {
+    @apply flex min-h-[80px] w-full rounded-md border border-input bg-background 
+    px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground 
+    focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring 
+    focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50;
+  }
+
+  .scrollbar-hide {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideIn {
+  from { transform: translateY(10px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
+
+.animate-slide-in {
+  animation: slideIn 0.3s ease-out;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-muted rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-muted-foreground/30;
+}
+
+/* Glass effect */
+.glass {
+  @apply bg-background/80 backdrop-blur-sm border shadow-sm;
+}
+
+/* Card hover effects */
+.card-hover {
+  @apply transition-all duration-300 hover:shadow-md hover:translate-y-[-2px];
+}
+
+/* Status badges */
+.status-badge {
+  @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium transition-colors;
+}
+
+.status-badge-draft {
+  @apply bg-gray-500/10 text-gray-500;
+}
+
+.status-badge-pending {
+  @apply bg-yellow-500/10 text-yellow-500;
+}
+
+.status-badge-paid {
+  @apply bg-green-500/10 text-green-500;
+}
+
+.status-badge-overdue {
+  @apply bg-red-500/10 text-red-500;
+}
+
+/* React Dates Overrides */
+.SingleDatePicker {
+  width: 100%;
+}
+
+.SingleDatePickerInput {
+  width: 100%;
+  background: transparent !important;
+  border: 1px solid hsl(var(--input)) !important;
+  border-radius: var(--radius);
+}
+
+.SingleDatePickerInput:hover {
+  border-color: hsl(var(--input)) !important;
+}
+
+.DateInput {
+  width: 100% !important;
+  background: transparent !important;
+}
+
+.DateInput_input {
+  background: transparent !important;
+  border: none !important;
+  color: hsl(var(--foreground)) !important;
+  font-size: 0.875rem !important;
+  font-weight: normal !important;
+  padding: 0.5rem 0.75rem !important;
+}
+
+.DateInput_input::placeholder {
+  color: hsl(var(--muted-foreground)) !important;
+}
+
+.SingleDatePicker_picker {
+  background: hsl(var(--background)) !important;
+  border: 1px solid hsl(var(--border)) !important;
+  border-radius: var(--radius) !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+  margin-top: 4px !important;
+}
+
+.CalendarDay {
+  border: none !important;
+  color: hsl(var(--foreground)) !important;
+}
+
+.CalendarDay__default:hover {
+  background: hsl(var(--accent)) !important;
+  border: none !important;
+}
+
+.CalendarDay__selected {
+  background: hsl(var(--primary)) !important;
+  color: hsl(var(--primary-foreground)) !important;
+}
+
+.CalendarDay__selected:hover {
+  background: hsl(var(--primary)) !important;
+}
+
+.DayPickerNavigation_button {
+  border: none !important;
+  background: transparent !important;
+}
+
+.DayPickerNavigation_button:hover {
+  background: hsl(var(--accent)) !important;
+}
+
+.CalendarMonth_caption {
+  color: hsl(var(--foreground)) !important;
+}
+
+/* Dark mode adjustments */
+.dark .SingleDatePickerInput {
+  background: transparent !important;
+}
+
+.dark .DateInput_input {
+  background: transparent !important;
+  color: hsl(var(--foreground)) !important;
+}
+
+.dark .SingleDatePicker_picker {
+  background: hsl(var(--background)) !important;
+}
+
+.dark .CalendarDay {
+  background: transparent !important;
+}
+
+.dark .CalendarDay__default:hover {
+  background: hsl(var(--accent)) !important;
+}
+
+.dark .CalendarMonth_caption {
+  color: hsl(var(--foreground)) !important;
+}
+
+/* Date picker theme overrides */
+input[type="date"] {
+  @apply bg-background text-foreground border-input;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  @apply dark:invert;
+}
+
+.dark input[type="date"] {
+  @apply bg-background text-foreground border-input;
+}
+
+/* Calendar popup theme */
+::-webkit-calendar-picker-indicator {
+  background-color: transparent;
+  cursor: pointer;
+}
+
+.dark ::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* Add to your existing animations */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-4px); }
+  75% { transform: translateX(4px); }
+}
+
+.animate-shake {
+  animation: shake 0.3s ease-in-out;
+}
+
+@layer utilities {
+  .container {
+    @apply mx-auto px-6;
+    max-width: calc(100vw - 288px); /* 72px (sidebar) + 24px (padding) */
+    width: 100%;
+  }
+}
+
+/* Responsive layout adjustments */
+@media (max-width: 1024px) {
+  .pl-72 {
+    padding-left: 0;
+  }
+
+  .w-72 {
+    width: 0;
+    transform: translateX(-100%);
+  }
+
+  .sidebar-open .w-72 {
+    width: 18rem;
+    transform: translateX(0);
+  }
+
+  .sidebar-open .pl-72 {
+    padding-left: 18rem;
+  }
+}
+
+/* Add smooth transitions */
+.pl-72,
+.w-72 {
+  transition: all 0.3s ease-in-out;
+}
