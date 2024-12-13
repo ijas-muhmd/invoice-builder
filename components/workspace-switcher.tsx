@@ -3,7 +3,7 @@
 import * as React from "react"
 import { useWorkspace, type Workspace } from "@/contexts/workspace-context"
 import { cn } from "@/lib/utils"
-import { Check, ChevronsUpDown, PlusCircle, Settings } from "lucide-react"
+import { Check, ChevronsUpDown, PlusCircle, Settings, ImagePlus, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
   Command,
@@ -31,6 +31,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { WorkspaceSettings } from "@/components/workspace-settings"
+import Image from "next/image"
 
 export function WorkspaceSwitcher() {
   const { workspaces, currentWorkspace, addWorkspace, setCurrentWorkspace } = useWorkspace()
@@ -39,6 +40,7 @@ export function WorkspaceSwitcher() {
   const [mounted, setMounted] = React.useState(false)
   const [newWorkspace, setNewWorkspace] = React.useState({
     name: "",
+    logo: "",
     businessDetails: {
       name: "",
       email: "",
@@ -68,7 +70,7 @@ export function WorkspaceSwitcher() {
           >
             <Avatar className="mr-2 h-5 w-5">
               <AvatarImage
-                src={currentWorkspace.logo}
+                src={currentWorkspace.logo || ''}
                 alt={currentWorkspace.name}
               />
               <AvatarFallback>
@@ -96,7 +98,7 @@ export function WorkspaceSwitcher() {
                   >
                     <Avatar className="mr-2 h-5 w-5">
                       <AvatarImage
-                        src={workspace.businessDetails.logo}
+                        src={workspace.logo || ''}
                         alt={workspace.name}
                       />
                       <AvatarFallback>
@@ -142,6 +144,53 @@ export function WorkspaceSwitcher() {
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-2 pb-4">
+            <div className="space-y-2">
+              <Label htmlFor="logo">Logo</Label>
+              <div className="flex items-center gap-4">
+                {newWorkspace.logo ? (
+                  <div className="relative w-16 h-16 border rounded-lg overflow-hidden">
+                    <Image
+                      src={newWorkspace.logo}
+                      alt="Logo preview"
+                      fill
+                      className="object-contain"
+                    />
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      className="absolute top-1 right-1 h-6 w-6 bg-background/80 hover:bg-background"
+                      onClick={() => setNewWorkspace(prev => ({ ...prev, logo: "" }))}
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  </div>
+                ) : (
+                  <label className="w-16 h-16 flex flex-col items-center justify-center border border-dashed rounded-lg cursor-pointer hover:bg-muted/50">
+                    <ImagePlus className="h-6 w-6 text-muted-foreground mb-2" />
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0]
+                        if (file) {
+                          const reader = new FileReader()
+                          reader.onloadend = () => {
+                            const base64String = reader.result as string
+                            setNewWorkspace(prev => ({
+                              ...prev,
+                              logo: base64String
+                            }))
+                          }
+                          reader.readAsDataURL(file)
+                        }
+                      }}
+                    />
+                  </label>
+                )}
+              </div>
+            </div>
             <div className="space-y-2">
               <Label htmlFor="name">Workspace Name</Label>
               <Input
@@ -199,6 +248,7 @@ export function WorkspaceSwitcher() {
                 setShowNewWorkspaceDialog(false)
                 setNewWorkspace({
                   name: "",
+                  logo: "",
                   businessDetails: {
                     name: "",
                     email: "",

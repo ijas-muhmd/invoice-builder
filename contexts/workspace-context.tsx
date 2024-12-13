@@ -18,6 +18,7 @@ export interface Workspace {
   businessDetails: BusinessDetails
   createdAt: string
   isPersonal?: boolean
+  logo?: string
 }
 
 interface WorkspaceContextType {

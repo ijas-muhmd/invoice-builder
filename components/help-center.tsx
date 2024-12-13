@@ -10,6 +10,7 @@ import { useRouter } from "next/navigation"
 import { cn } from "@/lib/utils"
 import { ProductTour } from "@/components/product-tour"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
+import router from "next/router"
 
 const onboardingSteps = [
   {

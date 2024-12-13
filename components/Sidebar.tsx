@@ -68,11 +68,9 @@ export default function Sidebar() {
     const currentDraft = getDraft();
     if (currentDraft) {
       // Save current as draft
-      const newDraft = addInvoice(currentDraft, 'draft');
-      clearDraft();
-      
-      // Highlight the new draft
-      setNewDraftId(newDraft.id);
+      addInvoice(currentDraft, 'draft');
+      const newDraftId = currentDraft.id;
+      setNewDraftId(newDraftId);
       setTimeout(() => setNewDraftId(null), 2000);
       
       // Create new invoice
@@ -110,6 +108,12 @@ export default function Sidebar() {
         customerId: "",
         referenceNumber: "",
         projectCode: "",
+        itemLabels: {
+          description: "DESCRIPTION",
+          quantity: "QTY",
+          price: "PRICE",
+          amount: "AMOUNT"
+        },
       };
       saveDraft(newInvoice);
     }
@@ -230,6 +234,12 @@ export default function Sidebar() {
                             customerId: "",
                             referenceNumber: "",
                             projectCode: "",
+                            itemLabels: {
+                              description: "DESCRIPTION",
+                              quantity: "QTY",
+                              price: "PRICE",
+                              amount: "AMOUNT"
+                            },
                           };
                           saveDraft(newDraft);
                           router.push('/');

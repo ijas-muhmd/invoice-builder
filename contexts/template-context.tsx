@@ -177,7 +177,7 @@ export function TemplateProvider({ children }: { children: React.ReactNode }) {
     const template = templates.find(t => t.id === id)
     if (!template) return
 
-    const duplicate: Omit<Template, 'id' | 'createdAt'> = {
+    const duplicate: Omit<Template,  'createdAt'> = {
       ...template,
       id: crypto.randomUUID(),
       name: `${template.name} (Copy)`,

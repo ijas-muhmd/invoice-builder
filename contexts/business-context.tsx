@@ -5,15 +5,18 @@ import { useWorkspace } from "./workspace-context"
 
 export interface Business {
   id: string
-  workspaceId: string
   name: string
   email: string
   address: string
-  phone: string
-  taxNumber: string
-  postalCode: string
+  phone?: string
+  taxNumber?: string
+  postalCode?: string
   logo?: string
-  isDefault?: boolean
+  workspaceId: string
+  isDefault: boolean
+  registrationNumber?: string
+  website?: string
+  notes?: string
   createdAt: string
 }
 

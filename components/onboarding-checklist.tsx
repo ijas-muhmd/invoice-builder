@@ -10,6 +10,7 @@ import Joyride, { CallBackProps, STATUS } from 'react-joyride'
 import { useRouter } from "next/navigation"
 import { cn } from "@/lib/utils"
 import { ProductTour } from "@/components/product-tour"
+import router from "next/router"
 
 const steps = [
   {

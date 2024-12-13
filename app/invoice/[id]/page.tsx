@@ -128,7 +128,8 @@ export default function EditInvoicePage({ params }: { params: { id: string } }) 
         ...updatedValues,
         date: updatedValues.date?.toISOString() || new Date().toISOString(),
         dueDate: updatedValues.dueDate?.toISOString() || new Date().toISOString(),
-      }, newFields);
+        ...newFields
+      });
       
       return newFields;
     });
@@ -186,7 +187,7 @@ export default function EditInvoicePage({ params }: { params: { id: string } }) 
       const currentActiveFields = savedFields ? JSON.parse(savedFields) : activeFields;
 
       // Create a clean update object with only enabled fields
-      const updateData = {
+      const updateData:any = {
         ...value,
         date: value.date?.toISOString() || new Date().toISOString(),
         dueDate: value.dueDate?.toISOString() || new Date().toISOString(),
@@ -204,7 +205,8 @@ export default function EditInvoicePage({ params }: { params: { id: string } }) 
 
       // Debounce the update
       const timeoutId = setTimeout(() => {
-        updateInvoice(params.id, updateData, currentActiveFields);
+        // updateInvoice(params.id, updateData, currentActiveFields);
+        updateInvoice(params.id,updateData);
       }, 500);
 
       return () => clearTimeout(timeoutId);
@@ -225,8 +227,9 @@ export default function EditInvoicePage({ params }: { params: { id: string } }) 
       date: data.date.toISOString(),
       dueDate: data.dueDate.toISOString(),
       // Include selected bank account ID if exists
-      selectedBankAccountId: bankDetails?.selectedAccountId
-    }, activeFields);
+      selectedBankAccountId: bankDetails?.selectedAccountId,
+      ...activeFields
+    });
 
     toast({
       title: "Invoice updated",

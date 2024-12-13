@@ -9,11 +9,12 @@ import { v4 as uuidv4 } from 'uuid'
 export type InvoiceStatus = 'draft' | 'pending' | 'paid' | 'overdue'
 
 export interface Invoice extends Omit<InvoiceFormValues, 'date' | 'dueDate'> {
+  updatedAt: any
   id: string
   createdAt: string
   status: InvoiceStatus
-  date: string
-  dueDate: string
+  date: string | Date
+  dueDate: string | Date
   workspaceId: string
   activeFields?: string[]
   selectedBankAccountId?: string
@@ -24,8 +25,8 @@ interface InvoiceContextType {
   addInvoice: (invoice: InvoiceFormValues, status: InvoiceStatus) => void
   updateInvoice: (id: string, updates: Partial<Invoice>) => void
   deleteInvoice: (id: string) => void
-  saveDraft: (formData: InvoiceFormValues) => void
-  getDraft: () => InvoiceFormValues | null
+  saveDraft: (formData: InvoiceFormValues) => string
+  getDraft: () => (InvoiceFormValues & { id: string }) | null
   clearDraft: () => void
   getInvoice: (id: string) => Invoice | undefined
   getWorkspaceInvoices: (workspaceId: string) => Invoice[]
@@ -36,7 +37,7 @@ const InvoiceContext = createContext<InvoiceContextType>({
   addInvoice: () => {},
   updateInvoice: () => {},
   deleteInvoice: () => {},
-  saveDraft: () => {},
+  saveDraft: () => "",
   getDraft: () => null,
   clearDraft: () => {},
   getInvoice: () => undefined,
@@ -95,20 +96,21 @@ export function InvoiceProvider({ children }: { children: React.ReactNode }) {
       },
       activeFields,
       workspaceId: currentWorkspace?.id || "",
+      updatedAt: undefined
     };
 
     setInvoices(prev => [...prev, newInvoice]);
     return newInvoice;
   };
 
-  const updateInvoice = (id: string, data: InvoiceFormValues, activeFields?: string[]) => {
+  const updateInvoice = (id: string, updates: Partial<Invoice>, activeFields?: string[]) => {
     setInvoices(prev => prev.map(invoice => {
       if (invoice.id === id) {
         const hasChanges = JSON.stringify(invoice) !== JSON.stringify({
           ...invoice,
-          ...data,
-          date: data.date ? (typeof data.date === 'string' ? data.date : data.date.toISOString()) : invoice.date,
-          dueDate: data.dueDate ? (typeof data.dueDate === 'string' ? data.dueDate : data.dueDate.toISOString()) : invoice.dueDate,
+          ...updates,
+          date: updates.date ? (typeof updates.date === 'string' ? updates.date : updates.date.toISOString()) : invoice.date,
+          dueDate: updates.dueDate ? (typeof updates.dueDate === 'string' ? updates.dueDate : updates.dueDate.toISOString()) : invoice.dueDate,
           activeFields: activeFields || invoice.activeFields,
         });
 
@@ -116,9 +118,9 @@ export function InvoiceProvider({ children }: { children: React.ReactNode }) {
 
         return {
           ...invoice,
-          ...data,
-          date: data.date ? (typeof data.date === 'string' ? data.date : data.date.toISOString()) : invoice.date,
-          dueDate: data.dueDate ? (typeof data.dueDate === 'string' ? data.dueDate : data.dueDate.toISOString()) : invoice.dueDate,
+          ...updates,
+          date: updates.date ? (typeof updates.date === 'string' ? updates.date : updates.date.toISOString()) : invoice.date,
+          dueDate: updates.dueDate ? (typeof updates.dueDate === 'string' ? updates.dueDate : updates.dueDate.toISOString()) : invoice.dueDate,
           activeFields: activeFields || invoice.activeFields,
         };
       }
@@ -135,9 +137,11 @@ export function InvoiceProvider({ children }: { children: React.ReactNode }) {
     const activeFields = activeCustomFields ? JSON.parse(activeCustomFields) : [];
 
     const selectedBankAccountId = localStorage.getItem('selected_bank_account_id');
+    const draftId = data.id || uuidv4();
 
     const draftData = {
       ...data,
+      id: draftId,
       gst: activeFields.includes('gst') ? (data.gst || "") : undefined,
       taxId: activeFields.includes('taxId') ? (data.taxId || "") : undefined,
       vatNumber: activeFields.includes('vatNumber') ? (data.vatNumber || "") : undefined,
@@ -159,6 +163,7 @@ export function InvoiceProvider({ children }: { children: React.ReactNode }) {
     };
 
     localStorage.setItem('invoice_draft', JSON.stringify(draftData));
+    return draftId;
   };
 
   const getDraft = () => {
@@ -173,8 +178,11 @@ export function InvoiceProvider({ children }: { children: React.ReactNode }) {
         localStorage.setItem('selected_bank_account_id', parsedDraft.bankDetails.selectedBankAccountId);
       }
 
+      const draftId = parsedDraft.id || uuidv4();
+
       return {
         ...parsedDraft,
+        id: draftId,
         date: new Date(parsedDraft.date),
         dueDate: new Date(parsedDraft.dueDate),
         gst: parsedDraft.gst || "",
@@ -191,7 +199,7 @@ export function InvoiceProvider({ children }: { children: React.ReactNode }) {
           price: "PRICE",
           amount: "AMOUNT"
         }
-      };
+      } as InvoiceFormValues & { id: string };
     }
     return null;
   };

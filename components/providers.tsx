@@ -46,7 +46,12 @@ export function Providers({ children }: { children: React.ReactNode }) {
                     <HelpCenter />
                     <WelcomeSlider onComplete={() => setTourCompleted(true)} />
                     <AdBanner tourCompleted={tourCompleted} />
-                    <PinEntryDialog />
+                    {/* <PinEntryDialog /> */}
+                    <PinEntryDialog open={false} onOpenChange={function (open: boolean): void {
+                      throw new Error("Function not implemented.")
+                    } } onSubmit={function (pin: string): void {
+                      throw new Error("Function not implemented.")
+                    } }  />
                     <Toaster />
                   </PinProtectionProvider>
                 </CustomerProvider>

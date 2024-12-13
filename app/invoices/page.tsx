@@ -42,7 +42,7 @@ export default function InvoicesPage() {
         <InvoiceList 
           invoices={invoices} 
           onDelete={handleDelete}
-          initialStatus={statusFilter || undefined}
+          // initialStatus={statusFilter || undefined}
         />
       )}
     </div>

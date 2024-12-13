@@ -25,6 +25,7 @@ import { CustomerForm } from "@/components/customer-form"
 import { toast } from "@/components/ui/use-toast"
 import { EmptyState } from "@/components/empty-state"
 import { Card } from "@/components/ui/card"
+import { useWorkspace } from "@/contexts/workspace-context"
 
 export default function CustomersPage() {
   const { customers, addCustomer, updateCustomer, deleteCustomer } = useCustomers()
@@ -32,6 +33,7 @@ export default function CustomersPage() {
   const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null)
   const [showAddDialog, setShowAddDialog] = useState(false)
   const [mounted, setMounted] = useState(false)
+  const { currentWorkspace } = useWorkspace()
 
   useEffect(() => {
     setMounted(true)
@@ -80,7 +82,8 @@ export default function CustomersPage() {
             </DialogHeader>
             <CustomerForm
               onSubmit={(data) => {
-                addCustomer(data)
+                const customerData = { ...data, workspaceId: currentWorkspace!.id }
+                addCustomer(customerData)
                 setShowAddDialog(false)
                 toast({
                   title: "Customer added",
@@ -175,7 +178,8 @@ export default function CustomersPage() {
           </DialogHeader>
           <CustomerForm
             onSubmit={(data) => {
-              addCustomer(data)
+              const customerData = { ...data, workspaceId: currentWorkspace!.id }
+              addCustomer(customerData)
               setShowAddDialog(false)
               toast({
                 title: "Customer added",

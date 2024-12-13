@@ -1,6 +1,7 @@
 import * as z from "zod"
 
 export const invoiceSchema = z.object({
+  id: z.string().optional(),
   logo: z.string().optional(),
   number: z.string().min(1, "Invoice number is required"),
   date: z.date({

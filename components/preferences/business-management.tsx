@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import { ImagePlus, X, Star, StarOff, Pencil, Trash2 } from "lucide-react"
+import { ImagePlus, X, Star, StarOff, Pencil, Trash2, ChevronLeft } from "lucide-react"
 import { useBusiness, type Business } from "@/contexts/business-context"
 import { useWorkspace } from "@/contexts/workspace-context"
 import Image from "next/image"
@@ -110,13 +110,14 @@ export function BusinessManagement({ showAddDialog, setShowAddDialog }: Business
             <div className="flex items-center text-sm text-muted-foreground">
               <Button 
                 variant="link" 
-                className="p-0 h-auto font-normal"
+                className="p-0 h-auto font-normal flex items-center gap-1"
                 onClick={() => {
                   setShowForm(false);
                   setEditBusiness(null);
                   setPreviewUrl("");
                 }}
               >
+                <ChevronLeft className="h-4 w-4" />
                 Business Profiles
               </Button>
               <span className="mx-2">/</span>

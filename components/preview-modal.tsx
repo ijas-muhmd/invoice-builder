@@ -134,7 +134,7 @@ export function PreviewModal({ form }: PreviewModalProps) {
   };
 
   const getFieldLabel = (fieldId: string) => {
-    const labels = {
+    const labels: { [key: string]: string } = { // Define the type for labels
       gst: 'GST Number',
       taxId: 'Tax ID',
       vatNumber: 'VAT Number',

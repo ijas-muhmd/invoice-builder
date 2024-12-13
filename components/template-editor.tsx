@@ -95,6 +95,12 @@ const demoInvoiceData: InvoiceFormValues = {
   amountPaid: 0,
   notes: "Thank you for your business!",
   terms: "Payment is due within 30 days",
+  itemLabels: {
+    description: "Description",
+    quantity: "Quantity",
+    price: "Rate",
+    amount: "Amount",
+  },
 }
 
 // Define built-in sections that can only be toggled

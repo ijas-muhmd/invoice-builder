@@ -115,9 +115,14 @@ export function EditInvoice({ params }: EditInvoiceProps) {
             <PreviewModal form={form} />
             <Button 
               variant="outline" 
-              onClick={() => {
-                const doc = generatePDF(form.getValues());
-                doc.save(`invoice-${form.getValues().number}.pdf`);
+              onClick={async () => {
+                const previewRef = document.getElementById('preview-ref') as HTMLDivElement | null;
+                if (previewRef) {
+                  const doc = await generatePDF(previewRef);
+                  doc.save(`invoice-${form.getValues().number}.pdf`);
+                }
+                // const doc = await generatePDF(form.getValues());
+                // doc.save(`invoice-${form.getValues().number}.pdf`);
               }}
               className="button-airbnb"
             >

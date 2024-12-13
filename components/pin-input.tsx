@@ -45,7 +45,7 @@ export function PinInput({ value, onChange, maxLength = 4 }: PinInputProps) {
       {pins.map((pin, index) => (
         <Input
           key={index}
-          ref={el => inputRefs.current[index] = el}
+          ref={el => { inputRefs.current[index] = el; }}
           type="text"
           inputMode="numeric"
           value={pin}

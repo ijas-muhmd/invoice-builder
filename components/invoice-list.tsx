@@ -87,7 +87,7 @@ export function InvoiceList({ invoices: allInvoices, onDelete, onUpdate }: Invoi
   const [selectedIds, setSelectedIds] = useState<string[]>([])
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
-  const [rowSelection, setRowSelection] = useState({})
+  const [rowSelection, setRowSelection] = useState<Record<string, boolean>>({})
   const [search, setSearch] = useState("")
   const [filters, setFilters] = useState({
     status: urlStatus || "all",
@@ -467,10 +467,11 @@ export function InvoiceList({ invoices: allInvoices, onDelete, onUpdate }: Invoi
                   <div className="flex flex-col gap-2">
                     <Button 
                       onClick={() => {
-                        toast({
-                          title: "Filters applied",
-                          description: "The invoice list has been updated.",
-                        })
+                        // toast({
+                        //   title: "Filters applied",
+                        //   description: "The invoice list has been updated.",
+                        // })
+                        toast.success("The invoice list has been updated.")
                       }}
                       className="w-full"
                     >
@@ -483,14 +484,15 @@ export function InvoiceList({ invoices: allInvoices, onDelete, onUpdate }: Invoi
                         const defaultFilters = {
                           status: "all",
                           dateRange: undefined,
-                          amountRange: [0, maxAmount],
+                          amountRange: [0, maxAmount] as [number, number],
                           customer: "all"
                         }
                         setFilters(defaultFilters)
-                        toast({
-                          title: "Filters reset",
-                          description: "All filters have been cleared.",
-                        })
+                        // toast({
+                        //   title: "Filters reset",
+                        //   description: "All filters have been cleared.",
+                        // })
+                        toast.success("All filters have been cleared.")
                       }}
                     >
                       Reset Filters
