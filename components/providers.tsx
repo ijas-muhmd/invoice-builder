@@ -33,7 +33,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
             <BusinessDetailsProvider>
               <InvoiceProvider>
                 <CustomerProvider>
-                  <PinProtectionProvider>
+                  {/* <PinProtectionProvider> */}
                     <div className="flex">
                       <div className="fixed w-72 h-screen">
                         <Sidebar />
@@ -43,8 +43,8 @@ export function Providers({ children }: { children: React.ReactNode }) {
                       </main>
                     </div>
                     <AutosaveIndicator saving={false} />
-                    <HelpCenter />
-                    <WelcomeSlider onComplete={() => setTourCompleted(true)} />
+                    {/* <HelpCenter /> */}
+                    {/* <WelcomeSlider onComplete={() => setTourCompleted(true)} /> */}
                     <AdBanner tourCompleted={tourCompleted} />
                     {/* <PinEntryDialog /> */}
                     <PinEntryDialog open={false} onOpenChange={function (open: boolean): void {
@@ -53,7 +53,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
                       throw new Error("Function not implemented.")
                     } }  />
                     <Toaster />
-                  </PinProtectionProvider>
+                  {/* </PinProtectionProvider> */}
                 </CustomerProvider>
               </InvoiceProvider>
             </BusinessDetailsProvider>

@@ -148,7 +148,7 @@ export function PreviewModal({ form }: PreviewModalProps) {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline" className="button-airbnb">
+        <Button variant="outline" className="button-airbnb" onClick={() => console.log(form.control._formValues)}>
           <Eye className="w-4 h-4 mr-2" />
           Preview Invoice
         </Button>

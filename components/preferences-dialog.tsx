@@ -71,17 +71,17 @@ export function PreferencesDialog({ open, onOpenChange }: PreferencesDialogProps
         }
       ]
     },
-    {
-      title: "Security",
-      icon: Lock,
-      items: [
-        {
-          title: "App Protection",
-          description: "Set up PIN protection for your data",
-          component: <SecurityPreferences />
-        }
-      ]
-    },
+    // {
+    //   title: "Security",
+    //   icon: Lock,
+    //   items: [
+    //     {
+    //       title: "App Protection",
+    //       description: "Set up PIN protection for your data",
+    //       component: <SecurityPreferences />
+    //     }
+    //   ]
+    // },
     {
       title: "Data & Privacy",
       icon: Database,

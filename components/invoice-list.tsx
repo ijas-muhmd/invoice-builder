@@ -570,7 +570,7 @@ export function InvoiceList({ invoices: allInvoices, onDelete, onUpdate }: Invoi
                         )}
                       </TableCell>
                     ))}
-                    <div className="absolute inset-y-0 right-0 w-[100px] bg-gradient-to-l from-background via-background/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-end pr-4">
+                    <td className="absolute inset-y-0 right-0 w-[100px] bg-gradient-to-l from-background via-background/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-end pr-4">
                       <Button
                         variant="ghost"
                         size="icon"
@@ -584,7 +584,7 @@ export function InvoiceList({ invoices: allInvoices, onDelete, onUpdate }: Invoi
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>
-                    </div>
+                    </td>
                   </TableRow>
                 ))
               ) : (

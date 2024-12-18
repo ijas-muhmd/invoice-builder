@@ -47,7 +47,7 @@ import { BankAccountSelectField } from "@/components/bank-account-select-field";
 
 export default function Home() {
   const { businessDetails } = useBusinessDetails()
-  const { addInvoice, getDraft, clearDraft, saveDraft } = useInvoices()
+  const {invoices, addInvoice, getDraft, clearDraft, saveDraft } = useInvoices()
   const router = useRouter()
 
   const form = useForm<InvoiceFormValues>({
@@ -193,6 +193,20 @@ export default function Home() {
     }
   };
 
+  const getNextInvoiceNumber = () => {
+    console.log(`invoice length.......${invoices.length}`);
+    if (invoices.length === 0) return "INV-0002";
+    
+    const numbers = invoices.map(inv => {
+      const match = inv.number.match(/INV-(\d+)/);
+      return match ? parseInt(match[1]) : 0;
+    });
+    
+    const maxNumber = Math.max(...numbers);
+    return `INV-${String(maxNumber + 2).padStart(4, '0')}`;
+    // return "INV-0004";
+  };
+
   const handleClearDraft = () => {
     clearDraft()
     const defaultValues = {
@@ -256,13 +270,15 @@ export default function Home() {
     return () => subscription.unsubscribe();
   }, [form, saveDraft]);
 
-  const saveDraftAndNavigate = () => {
+  const saveDraftAndNavigate = async () => {
     const currentData = form.getValues()
-    addInvoice(currentData, 'draft')
+    await addInvoice(currentData, 'draft')
     clearDraft()
+    
+    // Create default values while preserving custom fields structure
     const defaultValues = {
       logo: "",
-      number: "INV-0001",
+      number: getNextInvoiceNumber(),
       date: new Date(),
       dueDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
       paymentTerms: "",
@@ -288,21 +304,23 @@ export default function Home() {
       amountPaid: 0,
       notes: "",
       terms: "",
-      gst: "",
-      taxId: "",
-      vatNumber: "",
-      customerId: "",
-      referenceNumber: "",
-      projectCode: "",
-      bankDetails: "",
-      termsAndConditions: "",
       itemLabels: {
         description: "DESCRIPTION",
         quantity: "QTY",
         price: "PRICE",
         amount: "AMOUNT"
       },
+      // Initialize all possible custom fields
+      gst: activeFields.includes('gst') ? "" : undefined,
+      taxId: activeFields.includes('taxId') ? "" : undefined,
+      vatNumber: activeFields.includes('vatNumber') ? "" : undefined,
+      customerId: activeFields.includes('customerId') ? "" : undefined,
+      referenceNumber: activeFields.includes('referenceNumber') ? "" : undefined,
+      projectCode: activeFields.includes('projectCode') ? "" : undefined,
+      bankDetails: activeFields.includes('bankDetails') ? "" : undefined,
+      termsAndConditions: activeFields.includes('termsAndConditions') ? "" : undefined,
     };
+
     form.reset(defaultValues);
     router.push('/invoices')
   }
@@ -320,32 +338,32 @@ export default function Home() {
 
   // Update the handleToggleField function
   const handleToggleField = (fieldId: string, enabled: boolean) => {
-    setActiveFields(prev => {
-      const newFields = enabled 
-        ? [...prev, fieldId]
-        : prev.filter(f => f !== fieldId);
-      
-      // Save active fields to localStorage
-      localStorage.setItem('active_custom_fields', JSON.stringify(newFields));
-      
-      // Get current form values
-      const currentValues = form.getValues();
-      
-      // Create updated values with the new field
-      const updatedValues = {
-        ...currentValues,
-        // If enabling, set empty string, if disabling, remove the field
-        [fieldId]: enabled ? "" : undefined
-      };
-      
-      // Update form with new values
-      form.reset(updatedValues);
-      
-      // Save to draft immediately
-      saveDraft(updatedValues);
-      
-      return newFields;
-    });
+    // Create the new fields array first
+    const newFields = enabled 
+      ? [...activeFields, fieldId]
+      : activeFields.filter(f => f !== fieldId);
+    
+    // Save active fields to localStorage
+    localStorage.setItem('active_custom_fields', JSON.stringify(newFields));
+    
+    // Get current form values
+    const currentValues = form.getValues();
+    
+    // Create updated values with the new field
+    const updatedValues = {
+      ...currentValues,
+      // If enabling, set empty string, if disabling, remove the field
+      [fieldId]: enabled ? "" : undefined
+    };
+    
+    // Update form with new values
+    form.reset(updatedValues);
+    
+    // Save to draft immediately
+    saveDraft(updatedValues);
+    
+    // Update state after all other operations
+    setActiveFields(newFields);
   };
 
   return (

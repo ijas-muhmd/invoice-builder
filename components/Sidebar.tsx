@@ -51,6 +51,15 @@ export default function Sidebar() {
       : []
   }, [invoices, currentWorkspace])
 
+  // const recentInvoicesList = useMemo(() => {
+  //   return currentWorkspace
+  //     ? invoices
+  //         .filter(inv => inv.workspaceId === currentWorkspace.id)
+          
+          
+  //     : []
+  // }, [invoices, currentWorkspace])
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'paid':
@@ -64,19 +73,20 @@ export default function Sidebar() {
     }
   };
 
-  const handleNewInvoice = () => {
+  const handleNewInvoice = async () => {
     const currentDraft = getDraft();
     if (currentDraft) {
       // Save current as draft
-      addInvoice(currentDraft, 'draft');
+      await addInvoice(currentDraft, 'draft');
       const newDraftId = currentDraft.id;
       setNewDraftId(newDraftId);
       setTimeout(() => setNewDraftId(null), 2000);
-      
+      router.refresh();
       // Create new invoice
       const newInvoice: InvoiceFormValues = {
         logo: "",
-        number: `INV-${String(Date.now()).slice(-6)}`,
+        // number: `INV-${String(Date.now()).slice(-6)}`,
+        number: getNextInvoiceNumber(),
         date: new Date(),
         dueDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
         paymentTerms: "",
@@ -126,6 +136,20 @@ export default function Sidebar() {
     );
     const taxAmount = subtotal * (invoice.tax / 100);
     return subtotal + taxAmount + invoice.shipping - invoice.discount;
+  };
+
+  const getNextInvoiceNumber = () => {
+    console.log(`invoice length.......${invoices.length}`);
+    if (invoices.length === 0) return "INV-0002";
+    
+    const numbers = invoices.map(inv => {
+      const match = inv.number.match(/INV-(\d+)/);
+      return match ? parseInt(match[1]) : 0;
+    });
+    
+    const maxNumber = Math.max(...numbers);
+    return `INV-${String(maxNumber + 2).padStart(4, '0')}`;
+    // return "INV-0004";
   };
 
   return (
@@ -187,22 +211,29 @@ export default function Sidebar() {
                     <AlertDialogCancel
                       onClick={() => {
                         // Just close the dialog and stay on current invoice
+                        router.push('/');
+                        
+                        router.refresh();
                       }}
                     >
                       Continue Current Invoice
                     </AlertDialogCancel>
                     <AlertDialogAction
-                      onClick={() => {
+                      onClick={async () => {
                         const currentDraft = getDraft();
                         if (currentDraft) {
                           // Save current as draft
-                          addInvoice(currentDraft, 'draft');
-                          clearDraft();
+                          console.log(currentDraft);
+                          await addInvoice(currentDraft, 'draft');
+                          router.refresh();
                           
+                          clearDraft();
+                            
                           // Create new draft
                           const newDraft: InvoiceFormValues = {
                             logo: "",
-                            number: `INV-${String(Date.now()).slice(-6)}`,
+                            // number: `INV-${String(Date.now()).slice(-6)}`,
+                            number: getNextInvoiceNumber(),
                             date: new Date(),
                             dueDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
                             paymentTerms: "",
@@ -280,7 +311,7 @@ export default function Sidebar() {
             </li>
 
             <li data-tour="recent-invoices">
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between bg-background py-2">
                 <div className="text-sm font-semibold text-muted-foreground">Recent</div>
                 <Button
                   variant="ghost"
@@ -289,8 +320,10 @@ export default function Sidebar() {
                   className="h-8 w-8"
                   data-tour="theme-toggle"
                 >
-                  <Sun className="h-4 w-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-                  <Moon className="absolute h-4 w-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+                  <div className="relative h-4 w-4">
+                    <Sun className="absolute h-4 w-4 rotate-0 scale-100 transition-transform duration-200 dark:-rotate-90 dark:scale-0" />
+                    <Moon className="absolute h-4 w-4 rotate-90 scale-0 transition-transform duration-200 dark:rotate-0 dark:scale-100" />
+                  </div>
                   <span className="sr-only">Toggle theme</span>
                 </Button>
               </div>
@@ -364,13 +397,13 @@ export default function Sidebar() {
                         <p className="mt-1 text-sm text-muted-foreground">
                           Create your first invoice to see it here
                         </p>
-                        <Button 
+                        {/* <Button 
                           variant="link" 
                           className="mt-2"
                           onClick={handleNewInvoice}
                         >
                           Create an invoice
-                        </Button>
+                        </Button> */}
                       </div>
                     </div>
                   )}

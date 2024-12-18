@@ -61,13 +61,37 @@ export default function EditInvoicePage({ params }: { params: { id: string } }) 
       referenceNumber: invoice.referenceNumber || "",
       projectCode: invoice.projectCode || "",
       termsAndConditions: invoice.termsAndConditions || "",
-      itemLabels: invoice.itemLabels || {
-        description: "DESCRIPTION",
-        quantity: "QTY",
-        price: "PRICE",
-        amount: "AMOUNT"
+      from: {
+        name: invoice.from?.name ?? "",
+        email: invoice.from?.email ?? "",
+        address: invoice.from?.address ?? "",
+        phone: invoice.from?.phone ?? "",
+        taxNumber: invoice.from?.taxNumber ?? "",
+        postalCode: invoice.from?.postalCode ?? "",
       },
-    } : undefined,
+      to: {
+        businessName: invoice.to?.businessName ?? "",
+        address: invoice.to?.address ?? "",
+        optional: invoice.to?.optional ?? "",
+      },
+      itemLabels: {
+        description: invoice.itemLabels?.description ?? "DESCRIPTION",
+        quantity: invoice.itemLabels?.quantity ?? "QTY",
+        price: invoice.itemLabels?.price ?? "PRICE",
+        amount: invoice.itemLabels?.amount ?? "AMOUNT"
+      },
+      items: invoice.items ?? [],
+      notes: invoice.notes ?? "",
+    } : {
+      bankDetails: "",
+      gst: "",
+      taxId: "",
+      vatNumber: "",
+      customerId: "",
+      referenceNumber: "",
+      projectCode: "",
+      termsAndConditions: "",
+    }
   });
 
   const { fields, append, remove } = useFieldArray({
@@ -84,136 +108,102 @@ export default function EditInvoicePage({ params }: { params: { id: string } }) 
     }
   }, [invoice, router]);
 
-  // Add this effect to load saved active fields
-  useEffect(() => {
-    const savedFields = localStorage.getItem('active_custom_fields');
-    if (savedFields) {
-      const fields = JSON.parse(savedFields);
-      setActiveFields(fields);
-    }
-  }, []);
-
-  const handleToggleField = (fieldId: string, enabled: boolean) => {
-    setActiveFields(prev => {
-      const newFields = enabled 
-        ? [...prev, fieldId]
-        : prev.filter(f => f !== fieldId);
-      
-      // Save active fields to localStorage
-      localStorage.setItem('active_custom_fields', JSON.stringify(newFields));
-      
-      // Get current form values
-      const currentValues = form.getValues();
-      
-      // Create updated values with the new field
-      const updatedValues = {
-        ...currentValues,
-        // If enabling, set empty string, if disabling, remove the field
-        [fieldId]: enabled ? "" : undefined
-      };
-      
-      // Update form with new values
-      form.reset(updatedValues, { 
-        keepValues: true,
-        keepDirty: true,
-        keepIsSubmitted: true,
-        keepTouched: true,
-        keepErrors: true,
-        keepIsValid: true,
-        keepSubmitCount: true
-      });
-
-      // Trigger immediate autosave with the new field
-      updateInvoice(params.id, {
-        ...updatedValues,
-        date: updatedValues.date?.toISOString() || new Date().toISOString(),
-        dueDate: updatedValues.dueDate?.toISOString() || new Date().toISOString(),
-        ...newFields
-      });
-      
-      return newFields;
-    });
-  };
-
-  // Initialize activeFields based on existing data
+  // Update the initialization of activeFields
   useEffect(() => {
     if (invoice) {
-      // Use saved active fields if they exist
-      if (invoice.activeFields) {
-        setActiveFields(invoice.activeFields);
-        // Save to localStorage to maintain state
-        localStorage.setItem('active_custom_fields', JSON.stringify(invoice.activeFields));
-        
-        // If bank details exist, restore the selected bank account
-        if (invoice.bankDetails && invoice.selectedBankAccountId) {
-          localStorage.setItem('current_bank_details', JSON.stringify({
-            content: invoice.bankDetails,
-            selectedAccountId: invoice.selectedBankAccountId
-          }));
+     
+      if (Array.isArray(invoice.activeFields) && invoice.activeFields.length > 0) {
+          setActiveFields(invoice.activeFields);
+          
         }
-      } else {
-        // Calculate active fields from data
-        const fieldsToActivate = [];
-        if (invoice.gst) fieldsToActivate.push('gst');
-        if (invoice.taxId) fieldsToActivate.push('taxId');
-        if (invoice.vatNumber) fieldsToActivate.push('vatNumber');
-        if (invoice.customerId) fieldsToActivate.push('customerId');
-        if (invoice.referenceNumber) fieldsToActivate.push('referenceNumber');
-        if (invoice.projectCode) fieldsToActivate.push('projectCode');
-        if (invoice.bankDetails) fieldsToActivate.push('bankDetails');
-        if (invoice.termsAndConditions) fieldsToActivate.push('termsAndConditions');
-        
-        setActiveFields(fieldsToActivate);
-        // Save to localStorage to maintain state
-        localStorage.setItem('active_custom_fields', JSON.stringify(fieldsToActivate));
-      }
+      // Load active fields from localStorage specific to the current invoice
+      // const savedFields = localStorage.getItem(`active_custom_fields_${params.id}`);
+      // if (savedFields) {
+      //   const parsedFields = JSON.parse(savedFields);
+      //   setActiveFields(parsedFields);
+      // } else if (Array.isArray(invoice.activeFields) && invoice.activeFields.length > 0) {
+      //   setActiveFields(invoice.activeFields);
+      //   localStorage.setItem(`active_custom_fields_${params.id}`, JSON.stringify(invoice.activeFields));
+      // }
     }
-  }, [invoice]);
+  }, [invoice, params.id]);
+
+  // Update the handleToggleField function
+  const handleToggleField = (fieldId: string, enabled: boolean) => {
+    const newActiveFields = enabled 
+      ? [...activeFields, fieldId]
+      : activeFields.filter(f => f !== fieldId);
+    
+    const currentValues = form.getValues();
+    
+    // Ensure we preserve the current values even when fields are toggled
+    const updateData = {
+      ...invoice,
+      ...currentValues,
+      activeFields: newActiveFields,
+      // Always include these fields with their current values or empty strings
+      gst: currentValues.gst || "",
+      taxId: currentValues.taxId || "",
+      vatNumber: currentValues.vatNumber || "",
+      customerId: currentValues.customerId || "",
+      referenceNumber: currentValues.referenceNumber || "",
+      projectCode: currentValues.projectCode || "",
+      bankDetails: currentValues.bankDetails || "",
+      termsAndConditions: currentValues.termsAndConditions || "",
+    };
+
+    // Update the invoice in the context
+    updateInvoice(params.id, updateData);
+
+    // Update localStorage for the current invoice's active fields
+    localStorage.setItem(`active_custom_fields_${params.id}`, JSON.stringify(newActiveFields));
+    setActiveFields(newActiveFields);
+    
+    // Reset form with updated values
+    form.reset(updateData, {
+      keepDefaultValues: true,
+      keepDirty: true,
+      keepValues: true,
+    });
+  };
 
   // Update the autosave effect
   useEffect(() => {
     if (!form || !params.id) return;
 
     const subscription = form.watch((value) => {
-      // Prevent unnecessary updates
       if (!value || !form.formState.isDirty) return;
 
-      // Get the current bank details
       const savedBankDetails = localStorage.getItem('current_bank_details');
       const bankDetails = savedBankDetails ? JSON.parse(savedBankDetails) : null;
 
-      // Get current active fields
-      const savedFields = localStorage.getItem('active_custom_fields');
-      const currentActiveFields = savedFields ? JSON.parse(savedFields) : activeFields;
-
-      // Create a clean update object with only enabled fields
-      const updateData:any = {
+      const updateData = {
+        ...invoice,
         ...value,
-        date: value.date?.toISOString() || new Date().toISOString(),
-        dueDate: value.dueDate?.toISOString() || new Date().toISOString(),
-        // Only include fields that are active
-        gst: currentActiveFields.includes('gst') ? value.gst : undefined,
-        taxId: currentActiveFields.includes('taxId') ? value.taxId : undefined,
-        vatNumber: currentActiveFields.includes('vatNumber') ? value.vatNumber : undefined,
-        customerId: currentActiveFields.includes('customerId') ? value.customerId : undefined,
-        referenceNumber: currentActiveFields.includes('referenceNumber') ? value.referenceNumber : undefined,
-        projectCode: currentActiveFields.includes('projectCode') ? value.projectCode : undefined,
-        bankDetails: currentActiveFields.includes('bankDetails') ? value.bankDetails : undefined,
-        termsAndConditions: currentActiveFields.includes('termsAndConditions') ? value.termsAndConditions : undefined,
+        date: new Date(value.date?.toISOString() || new Date().toISOString()),
+        dueDate: new Date(value.dueDate?.toISOString() || new Date().toISOString()),
         selectedBankAccountId: bankDetails?.selectedAccountId,
-      };
+        activeFields, // Include current activeFields
+        // Preserve all custom fields
+        gst: value.gst ?? invoice?.gst ?? '',
+        taxId: value.taxId ?? invoice?.taxId ?? '',
+        vatNumber: value.vatNumber ?? invoice?.vatNumber ?? '',
+        customerId: value.customerId ?? invoice?.customerId ?? '',
+        referenceNumber: value.referenceNumber ?? invoice?.referenceNumber ?? '',
+        projectCode: value.projectCode ?? invoice?.projectCode ?? '',
+        bankDetails: value.bankDetails ?? invoice?.bankDetails ?? '',
+        termsAndConditions: value.termsAndConditions ?? invoice?.termsAndConditions ?? '',
+      } as InvoiceFormValues
 
-      // Debounce the update
       const timeoutId = setTimeout(() => {
-        // updateInvoice(params.id, updateData, currentActiveFields);
-        updateInvoice(params.id,updateData);
+        updateInvoice(params.id, updateData);
       }, 500);
 
       return () => clearTimeout(timeoutId);
     });
 
     return () => subscription.unsubscribe();
-  }, [form, params.id, updateInvoice, activeFields]);
+  }, [form, params.id, updateInvoice, invoice, activeFields]);
 
   if (!mounted || !invoice) return null;
 
@@ -222,14 +212,26 @@ export default function EditInvoicePage({ params }: { params: { id: string } }) 
     const savedBankDetails = localStorage.getItem('current_bank_details');
     const bankDetails = savedBankDetails ? JSON.parse(savedBankDetails) : null;
 
-    updateInvoice(params.id, {
-      ...data,
+    // Create update object preserving all fields
+    const updateData = {
+      ...invoice, // Preserve existing data
+      ...data,    // Override with new values
       date: data.date.toISOString(),
       dueDate: data.dueDate.toISOString(),
-      // Include selected bank account ID if exists
       selectedBankAccountId: bankDetails?.selectedAccountId,
-      ...activeFields
-    });
+      // Preserve custom fields even if empty
+      gst: data.gst ?? invoice?.gst ?? '',
+      taxId: data.taxId ?? invoice?.taxId ?? '',
+      vatNumber: data.vatNumber ?? invoice?.vatNumber ?? '',
+      customerId: data.customerId ?? invoice?.customerId ?? '',
+      referenceNumber: data.referenceNumber ?? invoice?.referenceNumber ?? '',
+      projectCode: data.projectCode ?? invoice?.projectCode ?? '',
+      bankDetails: data.bankDetails ?? invoice?.bankDetails ?? '',
+      termsAndConditions: data.termsAndConditions ?? invoice?.termsAndConditions ?? '',
+      activeFields: activeFields, // Always include active fields
+    };
+
+    updateInvoice(params.id, updateData);
 
     toast({
       title: "Invoice updated",

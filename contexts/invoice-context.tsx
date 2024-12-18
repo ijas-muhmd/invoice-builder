@@ -69,9 +69,12 @@ export function InvoiceProvider({ children }: { children: React.ReactNode }) {
     
     const maxNumber = Math.max(...numbers);
     return `INV-${String(maxNumber + 1).padStart(4, '0')}`;
+    // return "INV-0004";
   };
 
-  const addInvoice = (data: InvoiceFormValues, status: InvoiceStatus = 'pending', activeFields?: string[]) => {
+  const addInvoice = (data: InvoiceFormValues, status: InvoiceStatus = 'pending') => {
+    const activeCustomFields = localStorage.getItem('active_custom_fields');
+    const activeFields = activeCustomFields ? JSON.parse(activeCustomFields) : [];
     const newInvoice: Invoice = {
       ...data,
       id: uuidv4(),
@@ -98,7 +101,6 @@ export function InvoiceProvider({ children }: { children: React.ReactNode }) {
       workspaceId: currentWorkspace?.id || "",
       updatedAt: undefined
     };
-
     setInvoices(prev => [...prev, newInvoice]);
     return newInvoice;
   };
@@ -170,6 +172,7 @@ export function InvoiceProvider({ children }: { children: React.ReactNode }) {
     const draft = localStorage.getItem('invoice_draft');
     if (draft) {
       const parsedDraft = JSON.parse(draft);
+     
       if (parsedDraft.activeFields) {
         localStorage.setItem('active_custom_fields', JSON.stringify(parsedDraft.activeFields));
       }

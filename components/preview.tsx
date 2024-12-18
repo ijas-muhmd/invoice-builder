@@ -52,7 +52,7 @@ export function Preview({ form }: PreviewProps) {
             <div className="text-gray-600 space-y-2">
               <div>
                 <p className="text-xs font-medium text-gray-500">INVOICE NO</p>
-                <p className="font-medium">{data.number}</p>
+                <p className="font-medium text-gray-600">{data.number}</p>
               </div>
               <div>
                 <p className="text-xs font-medium text-gray-500">ISSUE DATE</p>
@@ -105,37 +105,37 @@ export function Preview({ form }: PreviewProps) {
               {data.gst && (
                 <div>
                   <p className="text-xs font-medium text-gray-500">GST NUMBER</p>
-                  <p className="font-medium">{data.gst}</p>
+                  <p className="font-medium text-gray-600">{data.gst}</p>
                 </div>
               )}
               {data.taxId && (
                 <div>
                   <p className="text-xs font-medium text-gray-500">TAX ID</p>
-                  <p className="font-medium">{data.taxId}</p>
+                  <p className="font-medium text-gray-600">{data.taxId}</p>
                 </div>
               )}
               {data.vatNumber && (
                 <div>
                   <p className="text-xs font-medium text-gray-500">VAT NUMBER</p>
-                  <p className="font-medium">{data.vatNumber}</p>
+                  <p className="font-medium text-gray-600">{data.vatNumber}</p>
                 </div>
               )}
               {data.customerId && (
                 <div>
                   <p className="text-xs font-medium text-gray-500">CUSTOMER ID</p>
-                  <p className="font-medium">{data.customerId}</p>
+                  <p className="font-medium text-gray-600">{data.customerId}</p>
                 </div>
               )}
               {data.referenceNumber && (
                 <div>
                   <p className="text-xs font-medium text-gray-500">REFERENCE NUMBER</p>
-                  <p className="font-medium">{data.referenceNumber}</p>
+                  <p className="font-medium text-gray-600">{data.referenceNumber}</p>
                 </div>
               )}
               {data.projectCode && (
                 <div>
                   <p className="text-xs font-medium text-gray-500">PROJECT CODE</p>
-                  <p className="font-medium">{data.projectCode}</p>
+                  <p className="font-medium text-gray-600">{data.projectCode}</p>
                 </div>
               )}
             </div>
@@ -147,7 +147,7 @@ export function Preview({ form }: PreviewProps) {
           <div>
             <h2 className="text-xs font-medium text-gray-500 mb-2">FROM</h2>
             <div className="space-y-0.5 text-gray-900">
-              <p className="font-medium">{data.from.name}</p>
+              <p className="font-medium text-gray-600">{data.from.name}</p>
               <p className="text-gray-600">{data.from.address}</p>
               {data.from.email && (
                 <p className="text-gray-600">{data.from.email}</p>
@@ -167,7 +167,7 @@ export function Preview({ form }: PreviewProps) {
           <div>
             <h2 className="text-xs font-medium text-gray-500 mb-2">TO</h2>
             <div className="space-y-0.5 text-gray-900">
-              <p className="font-medium">{data.to.businessName}</p>
+              <p className="font-medium text-gray-600">{data.to.businessName}</p>
               <p className="text-gray-600">{data.to.address}</p>
               {data.to.optional && (
                 <p className="text-gray-600">{data.to.optional}</p>
