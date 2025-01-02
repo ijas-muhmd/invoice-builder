@@ -1,5 +1,8 @@
 "use client"
 
+import { useState, useRef } from "react"
+import { type UseFormReturn } from "react-hook-form"
+import { type InvoiceFormValues } from "@/app/invoice-schema"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -11,11 +14,9 @@ import {
 } from "@/components/ui/dialog"
 import { Eye, Printer, Download } from "lucide-react"
 import { Preview } from "@/components/preview"
-import { type UseFormReturn } from "react-hook-form"
-import { type InvoiceFormValues } from "@/app/invoice-schema"
-import { useRef } from "react"
 import { generatePDF } from "@/lib/generate-pdf"
 import { toast } from "react-hot-toast"
+import { AdDialog } from "@/components/ad-dialog"
 
 interface PreviewModalProps {
   form: UseFormReturn<InvoiceFormValues>
@@ -23,6 +24,8 @@ interface PreviewModalProps {
 
 export function PreviewModal({ form }: PreviewModalProps) {
   const previewRef = useRef<HTMLDivElement>(null)
+  const [showPreview, setShowPreview] = useState(false)
+  const [showAdDialog, setShowAdDialog] = useState(false)
 
   const handlePrint = () => {
     const printContent = previewRef.current?.innerHTML || ''
@@ -133,70 +136,69 @@ export function PreviewModal({ form }: PreviewModalProps) {
     }
   };
 
-  const getFieldLabel = (fieldId: string) => {
-    const labels: { [key: string]: string } = { // Define the type for labels
-      gst: 'GST Number',
-      taxId: 'Tax ID',
-      vatNumber: 'VAT Number',
-      customerId: 'Customer ID',
-      referenceNumber: 'Reference Number',
-      projectCode: 'Project Code'
-    };
-    return labels[fieldId] || fieldId;
-  };
-
   return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <Button variant="outline" className="button-airbnb" onClick={() => console.log(form.control._formValues)}>
-          <Eye className="w-4 h-4 mr-2" />
-          Preview Invoice
-        </Button>
-      </DialogTrigger>
-      <DialogContent className="max-w-4xl p-0">
-        <div className="flex flex-col h-[90vh]">
-          <div className="flex justify-between items-center p-4 border-b">
-            <DialogTitle>Invoice Preview</DialogTitle>
-            <div className="flex items-center gap-2">
-              <Button 
-                variant="outline" 
-                onClick={handleExportPDF}
-                className="button-airbnb"
-              >
-                <Download className="w-4 h-4 mr-2" />
-                Export PDF
-              </Button>
-              <Button 
-                variant="outline" 
-                onClick={handlePrint}
-                className="button-airbnb"
-              >
-                <Printer className="w-4 h-4 mr-2" />
-                Print
-              </Button>
-              <DialogClose />
+    <>
+      <Button
+        variant="outline"
+        onClick={() => setShowAdDialog(true)}
+        className="button-airbnb"
+      >
+        <Eye className="w-4 h-4 mr-2" />
+        Preview Invoice
+      </Button>
+
+      <AdDialog 
+        open={showAdDialog} 
+        onOpenChange={setShowAdDialog}
+        onContinue={() => setShowPreview(true)}
+      />
+
+      <Dialog open={showPreview} onOpenChange={setShowPreview}>
+        <DialogContent className="max-w-4xl p-0">
+          <div className="flex flex-col h-[90vh]">
+            <div className="flex justify-between items-center p-4 border-b">
+              <DialogTitle>Invoice Preview</DialogTitle>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  onClick={handleExportPDF}
+                  className="button-airbnb"
+                >
+                  <Download className="w-4 h-4 mr-2" />
+                  Export PDF
+                </Button>
+                <Button 
+                  variant="outline" 
+                  onClick={handlePrint}
+                  className="button-airbnb"
+                >
+                  <Printer className="w-4 h-4 mr-2" />
+                  Print
+                </Button>
+                <DialogClose />
+              </div>
+            </div>
+            <div className="flex-1 overflow-auto">
+              <div ref={previewRef}>
+                <Preview form={form} />
+              </div>
+            </div>
+            <div className="p-4 border-t text-center text-sm text-muted-foreground">
+              <p>Made with ❤️ by Invoice Maker <span className="px-2 py-0.5 bg-primary/10 text-primary rounded-full text-xs font-semibold">FREE</span></p>
+              <p className="text-xs mt-1">
+                <a 
+                  href="https://invoicemakerfree.com" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="hover:underline"
+                >
+                  invoicemakerfree.com
+                </a>
+              </p>
             </div>
           </div>
-          <div className="flex-1 overflow-auto">
-            <div ref={previewRef}>
-              <Preview form={form} />
-            </div>
-          </div>
-          <div className="p-4 border-t text-center text-sm text-muted-foreground">
-            <p>Made with ❤️ by Invoice Maker <span className="px-2 py-0.5 bg-primary/10 text-primary rounded-full text-xs font-semibold">FREE</span></p>
-            <p className="text-xs mt-1">
-              <a 
-                href="https://invoicemakerfree.com" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="hover:underline"
-              >
-                invoicemakerfree.com
-              </a>
-            </p>
-          </div>
-        </div>
-      </DialogContent>
-    </Dialog>
+        </DialogContent>
+      </Dialog>
+    </>
   )
 } 
