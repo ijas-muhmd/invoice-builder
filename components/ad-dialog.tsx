@@ -56,7 +56,7 @@ export function AdDialog({ open, onOpenChange, onContinue }: AdDialogProps) {
                 className="adsbygoogle"
                 style={{ display: "block" }}
                 data-ad-client="ca-pub-5677909398957197"
-                data-ad-slot="your-ad-slot-id"
+                data-ad-slot="2311431629"
                 data-ad-format="auto"
                 data-full-width-responsive="true"
               />

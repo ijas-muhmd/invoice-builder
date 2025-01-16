@@ -36,6 +36,7 @@ import { BusinessDetailsButton } from "@/components/business-details-button";
 import { CustomizeFieldsModal } from "@/components/customize-fields-modal";
 import { BankAccountSelectField } from "@/components/bank-account-select-field";
 import { Preview } from "@/components/preview"
+import { VersionFooter } from "@/components/version-footer";
 
 export default function EditInvoicePage({ params }: { params: { id: string } }) {
   const { invoices, updateInvoice } = useInvoices();
@@ -746,6 +747,7 @@ export default function EditInvoicePage({ params }: { params: { id: string } }) 
           </form>
         </Form>
         <AutosaveIndicator saving={saving} />
+        <VersionFooter />
       </div>
 
       {/* Hidden preview for PDF generation */}

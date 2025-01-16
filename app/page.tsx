@@ -44,6 +44,7 @@ import { AutosaveIndicator } from "@/components/autosave-indicator"
 import { BusinessDetailsButton } from "@/components/business-details-button"
 import { CustomizeFieldsModal } from "@/components/customize-fields-modal";
 import { BankAccountSelectField } from "@/components/bank-account-select-field";
+import { VersionFooter } from "@/components/version-footer";
 
 export default function Home() {
   const { businessDetails } = useBusinessDetails()
@@ -122,12 +123,11 @@ export default function Home() {
     control: form.control,
   });
 
-  function onSubmit(data: InvoiceFormValues) {
+  const onSubmit = (data: InvoiceFormValues) => {
     addInvoice(data, 'pending')
-    clearDraft()
     const defaultValues = {
       logo: "",
-      number: "INV-0001",
+      number: getNextInvoiceNumber(),
       date: new Date(),
       dueDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
       paymentTerms: "",
@@ -153,20 +153,12 @@ export default function Home() {
       amountPaid: 0,
       notes: "",
       terms: "",
-      gst: "",
-      taxId: "",
-      vatNumber: "",
-      customerId: "",
-      referenceNumber: "",
-      projectCode: "",
-      bankDetails: "",
-      termsAndConditions: "",
       itemLabels: {
         description: "DESCRIPTION",
         quantity: "QTY",
         price: "PRICE",
         amount: "AMOUNT"
-      },
+      }
     };
     form.reset(defaultValues);
     toast({
@@ -181,12 +173,19 @@ export default function Home() {
   const handleExportPDF = async () => {
     if (previewRef.current) {
       try {
+        await new Promise(resolve => setTimeout(resolve, 500)); // Wait for render
         const doc = await generatePDF(previewRef.current);
-        doc.save(`invoice-${form.getValues().number}.pdf`);
+        const fileName = `invoice-${form.getValues().number || 'draft'}.pdf`;
+        doc.save(fileName);
+        toast({
+          title: "Success",
+          description: "PDF has been generated successfully.",
+        });
       } catch (error) {
+        console.error('PDF Generation Error:', error);
         toast({
           title: "Error",
-          description: "Failed to generate PDF",
+          description: "Failed to generate PDF. Please try again.",
           variant: "destructive"
         });
       }
@@ -194,8 +193,7 @@ export default function Home() {
   };
 
   const getNextInvoiceNumber = () => {
-    console.log(`invoice length.......${invoices.length}`);
-    if (invoices.length === 0) return "INV-0002";
+    if (invoices.length === 0) return "INV-0001";
     
     const numbers = invoices.map(inv => {
       const match = inv.number.match(/INV-(\d+)/);
@@ -203,8 +201,7 @@ export default function Home() {
     });
     
     const maxNumber = Math.max(...numbers);
-    return `INV-${String(maxNumber + 2).padStart(4, '0')}`;
-    // return "INV-0004";
+    return `INV-${String(maxNumber + 1).padStart(4, '0')}`;
   };
 
   const handleClearDraft = () => {
@@ -797,14 +794,6 @@ export default function Home() {
             <div className="flex justify-end items-center gap-4">
               <PreviewModal form={form} />
               <Button 
-                variant="outline" 
-                type="button"
-                className="button-airbnb"
-                onClick={saveDraftAndNavigate}
-              >
-                Save as Draft
-              </Button>
-              <Button 
                 type="submit"
                 className="button-airbnb bg-primary hover:bg-primary/90"
               >
@@ -814,6 +803,7 @@ export default function Home() {
           </form>
         </Form>
         <AutosaveIndicator saving={saving} />
+        <VersionFooter />
 
         <div className="hidden">
           <div ref={previewRef}>

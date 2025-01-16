@@ -7,25 +7,83 @@ import Script from "next/script";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://invoicebuilder.com'),
   title: {
-    default: "Invoicify - Free Invoice Builder",
-    template: "%s | Invoicify"
+    default: "Free Invoice Generator | Create Professional Invoices Online Instantly",
+    template: "%s | Invoice Builder"
   },
-  description: "Create beautiful, professional invoices instantly with our free invoice builder. Works offline, no sign-up required, and your data stays local.",
+  description: "Create professional invoices instantly with our free invoice builder. Support for USD, EUR, GBP, INR. Perfect for freelancers, small businesses, and entrepreneurs. Works offline, no sign-up required.",
   keywords: [
+    // Product Core Terms
     "invoice generator",
     "free invoice maker",
     "invoice builder",
-    "invoice template",
-    "billing software",
-    "offline invoice",
-    "professional invoice",
-    "small business invoice",
-    "freelancer invoice"
+    "invoice creator",
+    "invoice software",
+    "billing system",
+    "invoicing tool",
+    "invoice template maker",
+
+    // Feature-based Keywords
+    "customizable invoice templates",
+    "multi-currency invoicing",
+    "automatic invoice numbering",
+    "recurring invoices",
+    "invoice tracking",
+    "payment reminder system",
+    "digital invoice storage",
+    "invoice export to pdf",
+    
+    // Use Case Keywords
+    "freelancer invoicing",
+    "small business billing",
+    "contractor invoice generator",
+    "professional service billing",
+    "consultant invoicing",
+    "agency billing software",
+    "startup invoicing solution",
+    
+    // Competitor Alternative Keywords
+    "quickbooks alternative",
+    "freshbooks alternative",
+    "zoho invoice alternative",
+    "wave accounting alternative",
+    "free invoice software",
+    
+    // Long-tail Keywords
+    "how to create professional invoice online",
+    "best free invoice generator for small business",
+    "create and download invoice instantly",
+    "professional invoice maker with logo",
+    "automatic invoice calculator with tax",
+    
+    // Intent-based Keywords
+    "generate invoice now",
+    "create invoice online free",
+    "make professional invoice",
+    "instant invoice download",
+    "easy invoice creation",
+    "quick billing solution",
+    
+    // Integration Keywords
+    "paypal invoice integration",
+    "stripe payment integration",
+    "google drive invoice backup",
+    "dropbox invoice storage",
+    "accounting software integration",
+    
+    // Industry-specific
+    "ecommerce invoice generator",
+    "retail billing software",
+    "service business invoicing",
+    "digital agency billing",
+    "construction invoice maker",
+    "consulting business invoice",
+    "freelance designer invoice"
   ],
-  authors: [{ name: "Invoicify" }],
-  creator: "Invoicify",
-  publisher: "Invoicify",
+  authors: [{ name: "Invoice Builder" }],
+  creator: "Invoice Builder",
+  publisher: "Invoice Builder",
   formatDetection: {
     email: false,
     address: false,
@@ -35,26 +93,28 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     locale: 'en_US',
-    url: 'https://invoicify.app',
-    title: 'Invoicify - Free Invoice Builder',
-    description: 'Create beautiful, professional invoices instantly with our free invoice builder. Works offline, no sign-up required.',
-    siteName: 'Invoicify',
+    url: 'https://invoicebuilder.com',
+    title: 'Free Invoice Generator | Create Professional Invoices Online Instantly',
+    description: 'Create professional invoices instantly with our free invoice builder. Support for multiple currencies. Perfect for freelancers and businesses.',
+    siteName: 'Invoice Builder - Free Professional Invoice Generator',
     images: [
       {
         url: '/og-image.png',
         width: 1200,
         height: 630,
-        alt: 'Invoicify - Free Invoice Builder',
+        alt: 'Invoice Builder - Free Professional Invoice Generator',
       }
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Invoicify - Free Invoice Builder',
-    description: 'Create beautiful, professional invoices instantly with our free invoice builder. Works offline, no sign-up required.',
+    title: 'Free Invoice Generator | Create Professional Invoices Online Instantly',
+    description: 'Create professional invoices instantly. Support for USD, EUR, GBP, INR. Perfect for freelancers and businesses.',
     images: ['/twitter-image.png'],
-    creator: '@invoicify',
+    creator: '@invoicebuilder',
+    site: '@invoicebuilder'
   },
+  category: 'Business Software',
   robots: {
     index: true,
     follow: true,
@@ -66,6 +126,10 @@ export const metadata: Metadata = {
       'max-snippet': -1,
     },
   },
+  verification: {
+    google: 'your-verification-code',
+    yandex: 'your-verification-code'
+  }
 };
 
 export const viewport: Viewport = {

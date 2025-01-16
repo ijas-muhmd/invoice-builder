@@ -17,6 +17,7 @@ import { Preview } from "@/components/preview"
 import { generatePDF } from "@/lib/generate-pdf"
 import { toast } from "react-hot-toast"
 import { AdDialog } from "@/components/ad-dialog"
+import { usePathname } from 'next/navigation';
 
 interface PreviewModalProps {
   form: UseFormReturn<InvoiceFormValues>
@@ -26,6 +27,8 @@ export function PreviewModal({ form }: PreviewModalProps) {
   const previewRef = useRef<HTMLDivElement>(null)
   const [showPreview, setShowPreview] = useState(false)
   const [showAdDialog, setShowAdDialog] = useState(false)
+  const pathname = usePathname();
+  const isInvoiceView = pathname.includes('/invoice/') || pathname === '/invoices';
 
   const handlePrint = () => {
     const printContent = previewRef.current?.innerHTML || ''
@@ -139,12 +142,21 @@ export function PreviewModal({ form }: PreviewModalProps) {
   return (
     <>
       <Button
+        type="button"
         variant="outline"
-        onClick={() => setShowAdDialog(true)}
         className="button-airbnb"
+        onClick={() => {
+          if (isInvoiceView) {
+            // Show ad dialog only in invoice views
+            setShowAdDialog(true);
+          } else {
+            // Directly show preview in other views
+            setShowPreview(true);
+          }
+        }}
       >
         <Eye className="w-4 h-4 mr-2" />
-        Preview Invoice
+        Preview
       </Button>
 
       <AdDialog 
