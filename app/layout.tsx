@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/components/providers";
-import Script from "next/script";
+import Script from 'next/script'
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -211,22 +211,16 @@ export default function RootLayout({
             {children}
           </Providers>
         </div>
-        <script
+        <Script
+          id="tour-inject"
+          strategy="afterInteractive"
           dangerouslySetInnerHTML={{
             __html: `
-              if ('serviceWorker' in navigator) {
-                window.addEventListener('load', function() {
-                  navigator.serviceWorker.register('/sw.js').then(
-                    function(registration) {
-                      console.log('ServiceWorker registration successful');
-                    },
-                    function(err) {
-                      console.log('ServiceWorker registration failed: ', err);
-                    }
-                  );
-                });
-              }
-            `,
+              var ele = document.createElement("script");
+              var scriptPath = "https://d275vndgzxnleh.cloudfront.net/tour-inject.js";
+              ele.setAttribute("src", scriptPath);
+              document.head.appendChild(ele);
+            `
           }}
         />
       </body>
