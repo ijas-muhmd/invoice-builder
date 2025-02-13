@@ -111,11 +111,11 @@ export default function RootLayout({
         <script src="https://unpkg.com/react@18/umd/react.production.min.js" />
         <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" />
         {/* Load the widget CSS */}
-        {/* <link rel="stylesheet" href="https://in-app-tour-widget.s3.ap-south-1.amazonaws.com/style.css" /> */}
-        <link rel="stylesheet" href="http://localhost:5173/dist/style.css" />
+        <link rel="stylesheet" href="https://in-app-tour-widget.s3.ap-south-1.amazonaws.com/style.css" />
+        {/* <link rel="stylesheet" href="http://localhost:5173/dist/style.css" /> */}
         {/* Then load the widget */}
-        {/* <script  src="https://in-app-tour-widget.s3.ap-south-1.amazonaws.com/chat-widget.umd.js" async /> */}
-        <script src="http://localhost:5173/dist/chat-widget.umd.js" async />
+        <script  src="https://in-app-tour-widget.s3.ap-south-1.amazonaws.com/chat-widget.umd.js" async />
+        {/* <script src="http://localhost:5173/dist/chat-widget.umd.js" async /> */}
         
         {/* Structured Data */}
         <script
