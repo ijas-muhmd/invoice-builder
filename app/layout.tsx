@@ -179,6 +179,17 @@ export default function RootLayout({
         {/* SEO verification */}
         <meta name="google-site-verification" content="your-verification-code" />
         
+        {/* Load React and ReactDOM first */}
+        <script src="https://unpkg.com/react@18/umd/react.production.min.js" />
+        <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" />
+        {/* Load the widget CSS */}
+        <link rel="stylesheet" href="https://in-app-tour-widget.s3.ap-south-1.amazonaws.com/style.css" />
+        {/* <link rel="stylesheet" href="http://localhost:5173/dist/style.css" /> */}
+        {/* Then load the widget */}
+        <script  src="https://in-app-tour-widget.s3.ap-south-1.amazonaws.com/chat-widget.umd.js" async />
+        {/* <script src="http://localhost:5173/dist/chat-widget.umd.js" async /> */}
+        
+        
         {/* Structured Data */}
         <script
           type="application/ld+json"
@@ -204,6 +215,8 @@ export default function RootLayout({
             })
           }}
         />
+
+        
       </head>
       <body className={inter.className}>
         <div className="min-h-screen">
@@ -211,15 +224,34 @@ export default function RootLayout({
             {children}
           </Providers>
         </div>
-        <Script
+      
+
+        
+
+        
+
+        {/* <Script
           id="tour-inject"
           strategy="afterInteractive"
+          // var scriptPath = "https://d275vndgzxnleh.cloudfront.net/tour-inject.js";
           dangerouslySetInnerHTML={{
             __html: `
               var ele = document.createElement("script");
-              var scriptPath = "https://d275vndgzxnleh.cloudfront.net/tour-inject.js";
+              var scriptPath = "http://localhost:8080/tour-inject.js";
               ele.setAttribute("src", scriptPath);
               document.head.appendChild(ele);
+            `
+          }}
+        /> */}
+
+<script
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.addEventListener('load', function() {
+                if (window.initChatWidget) {
+                  window.initChatWidget();
+                }
+              });
             `
           }}
         />
