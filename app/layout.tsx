@@ -109,22 +109,26 @@ export default function RootLayout({
 
         {/* Load React and ReactDOM first */}
         <script
-          src="https://cdn.jsdelivr.net/npm/react@18.2.0/umd/react.production.min.js"
+          
+          src="https://cdn.jsdelivr.net/npm/react@18/umd/react.production.min.js"
           crossOrigin="anonymous"
         />
         <script
-          src="https://cdn.jsdelivr.net/npm/react-dom@18.2.0/umd/react-dom.production.min.js"
+          
+          src="https://cdn.jsdelivr.net/npm/react-dom@18/umd/react-dom.production.min.js"
           crossOrigin="anonymous"
         />
         {/* Load the widget CSS */}
         <link rel="stylesheet" href="https://in-app-tour-widget.s3.ap-south-1.amazonaws.com/style.css" />
         {/* <link rel="stylesheet" href="http://localhost:5173/dist/style.css" /> */}
         {/* Then load the widget */}
-        <script  src="https://in-app-tour-widget.s3.ap-south-1.amazonaws.com/chat-widget.umd.js"  />
+        <script 
+          src="https://in-app-tour-widget.s3.ap-south-1.amazonaws.com/chat-widget.umd.js"
+        />
         {/* <script src="http://localhost:5173/dist/chat-widget.umd.js"  />  */}
         
         {/* Structured Data */}
-        <script
+        <Script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
             __html: JSON.stringify({
