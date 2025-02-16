@@ -108,7 +108,7 @@ export default function RootLayout({
         <meta name="google-site-verification" content="your-verification-code" />
 
         {/* Load React and ReactDOM first */}
-        <script
+        {/* <script
           
           src="https://cdn.jsdelivr.net/npm/react@18/umd/react.production.min.js"
           crossOrigin="anonymous"
@@ -117,7 +117,7 @@ export default function RootLayout({
           
           src="https://cdn.jsdelivr.net/npm/react-dom@18/umd/react-dom.production.min.js"
           crossOrigin="anonymous"
-        />
+        /> */}
         {/* Load the widget CSS */}
         <link rel="stylesheet" href="https://in-app-tour-widget.s3.ap-south-1.amazonaws.com/style.css" />
         {/* <link rel="stylesheet" href="http://localhost:5173/dist/style.css" /> */}
