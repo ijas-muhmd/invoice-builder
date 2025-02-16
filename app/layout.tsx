@@ -122,9 +122,10 @@ export default function RootLayout({
         <link rel="stylesheet" href="https://in-app-tour-widget.s3.ap-south-1.amazonaws.com/style.css" />
         {/* <link rel="stylesheet" href="http://localhost:5173/dist/style.css" /> */}
         {/* Then load the widget */}
-        <script 
+        {/* <script 
           src="https://in-app-tour-widget.s3.ap-south-1.amazonaws.com/chat-widget.umd.js"
-        />
+        /> */}
+        <script src="https://dyg4vwr4qsxg9.cloudfront.net/chat-widget.umd.js"></script>
         {/* <script src="http://localhost:5173/dist/chat-widget.umd.js"  />  */}
         
         {/* Structured Data */}
