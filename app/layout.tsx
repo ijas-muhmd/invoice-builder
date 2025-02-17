@@ -3,8 +3,11 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/components/providers";
 import Script from 'next/script'
+import ChatWidgetLoader from "./ChatWidgetLoader";
 
 const inter = Inter({ subsets: ["latin"] });
+
+
 
 export const metadata: Metadata = {
   title: {
@@ -119,14 +122,16 @@ export default function RootLayout({
           crossOrigin="anonymous"
         /> */}
         {/* Load the widget CSS */}
-        <link rel="stylesheet" href="https://in-app-tour-widget.s3.ap-south-1.amazonaws.com/style.css" />
+        {/* <link rel="stylesheet" href="https://in-app-tour-widget.s3.ap-south-1.amazonaws.com/style.css" /> */}
         {/* <link rel="stylesheet" href="http://localhost:5173/dist/style.css" /> */}
         {/* Then load the widget */}
         {/* <script 
           src="https://in-app-tour-widget.s3.ap-south-1.amazonaws.com/chat-widget.umd.js"
         /> */}
-        <script src="https://dyg4vwr4qsxg9.cloudfront.net/chat-widget.umd.js"></script>
+        {/* <script src="https://dyg4vwr4qsxg9.cloudfront.net/chat-widget.umd.js"></script> */}
         {/* <script src="http://localhost:5173/dist/chat-widget.umd.js"  />  */}
+
+        
         
         {/* Structured Data */}
         <Script
@@ -158,6 +163,7 @@ export default function RootLayout({
         <div className="min-h-screen">
           <Providers>
             {children}
+            <ChatWidgetLoader />
           </Providers>
         </div>
         {/* <Script
@@ -166,14 +172,34 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{
             __html: `
               var ele = document.createElement("script");
-              var scriptPath = "https://d275vndgzxnleh.cloudfront.net/tour-inject.js";
+              var scriptPath = "https://dyg4vwr4qsxg9.cloudfront.net/chat-widget.umd.js";
               ele.setAttribute("src", scriptPath);
               document.head.appendChild(ele);
             `
           }}
         /> */}
 
-        <script
+{/* <Script 
+          src="https://dyg4vwr4qsxg9.cloudfront.net/chat-widget.umd.js"
+          strategy="afterInteractive"
+          onLoad={() => {
+            try {
+              if (window.initChatWidget) {
+                window.initChatWidget();
+                console.log('Chat widget initialized successfully');
+              } else {
+                console.warn('initChatWidget function not found');
+              }
+            } catch (error) {
+              console.error('Error initializing chat widget:', error);
+            }
+          }}
+          onError={(e) => {
+            console.error('Error loading chat widget script:', e);
+          }}
+        /> */}
+
+        {/* <script
           dangerouslySetInnerHTML={{
             __html: `
               window.addEventListener('load', function() {
@@ -183,7 +209,31 @@ export default function RootLayout({
               });
             `
           }}
+        /> */}
+
+        {/* <script 
+          src="https://dyg4vwr4qsxg9.cloudfront.net/chat-widget.umd.js" 
+          async
         />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              function initWidget() {
+                if (window.initChatWidget) {
+                  window.initChatWidget();
+                } else {
+                  setTimeout(initWidget, 500);
+                }
+              }
+              
+              if (document.readyState === 'complete') {
+                initWidget();
+              } else {
+                window.addEventListener('load', initWidget);
+              }
+            `
+          }}
+        /> */}
       </body>
     </html>
   );
