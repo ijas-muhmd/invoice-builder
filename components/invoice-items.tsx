@@ -22,6 +22,7 @@ import {
 import { type UseFormReturn } from "react-hook-form"
 import { type InvoiceFormValues } from "@/app/invoice-schema"
 import { useState, useEffect } from "react"
+import { db } from "@/lib/db"
 
 interface InvoiceItemsProps {
   form: UseFormReturn<InvoiceFormValues>
@@ -50,18 +51,24 @@ export function InvoiceItems({ form, items, onAddItem, onRemoveItem }: InvoiceIt
 
   // Load saved headers after mount
   useEffect(() => {
+    const loadHeaders = async () => {
     setMounted(true);
-    const savedHeaders = localStorage.getItem('invoice-headers');
+      const savedHeaders = await db.get('settings', 'invoice-headers');
     if (savedHeaders) {
-      setHeaders(JSON.parse(savedHeaders));
+        setHeaders(savedHeaders);
     }
+    };
+    loadHeaders();
   }, []);
 
-  // Save headers to localStorage when they change
+  // Save headers to IndexedDB when they change
   useEffect(() => {
+    const saveHeaders = async () => {
     if (mounted) {
-      localStorage.setItem('invoice-headers', JSON.stringify(headers));
+        await db.set('settings', 'invoice-headers', headers);
     }
+    };
+    saveHeaders();
   }, [headers, mounted]);
 
   const calculateSubtotal = () => {
@@ -76,108 +83,36 @@ export function InvoiceItems({ form, items, onAddItem, onRemoveItem }: InvoiceIt
   const currencySymbol = currency === 'USD' ? '$' : currency === 'EUR' ? '€' : '£'
 
   return (
-    <Card className="p-6 card-elevated">
-      <div className="flex justify-between items-center mb-4">
-        <h3 className="text-lg font-semibold">Items</h3>
-        <Button type="button" variant="outline" size="sm" onClick={onAddItem}>
-          <Plus className="h-4 w-4 mr-2" />
-          Add Item
-        </Button>
-      </div>
-
+    <Card className="p-6">
       <Table>
         <TableHeader>
           <TableRow>
             <TableHead className="w-[40%]">
-              {mounted && editingHeader === 'description' ? (
-                <Input
-                  value={headers.description}
-                  onChange={(e) => {
-                    const newValue = e.target.value;
-                    setHeaders(h => ({ ...h, description: newValue }));
-                    form.setValue('itemLabels.description', newValue, { shouldDirty: true });
-                  }}
-                  onBlur={() => setEditingHeader(null)}
-                  autoFocus
-                />
-              ) : (
-                <button
-                  onClick={() => mounted && setEditingHeader('description')}
-                  className="hover:text-primary"
-                >
-                  {headers.description}
-                </button>
-              )}
+              <div className="flex items-center gap-2">
+                <span>{headers.description}</span>
+              </div>
             </TableHead>
-            <TableHead>
-              {mounted && editingHeader === 'quantity' ? (
-                <Input
-                  value={headers.quantity}
-                  onChange={(e) => {
-                    const newValue = e.target.value;
-                    setHeaders(h => ({ ...h, quantity: newValue }));
-                    form.setValue('itemLabels.quantity', newValue, { shouldDirty: true });
-                  }}
-                  onBlur={() => setEditingHeader(null)}
-                  autoFocus
-                />
-              ) : (
-                <button
-                  onClick={() => mounted && setEditingHeader('quantity')}
-                  className="hover:text-primary"
-                >
-                  {headers.quantity}
-                </button>
-              )}
+            <TableHead className="w-[15%]">
+              <div className="flex items-center gap-2">
+                <span>{headers.quantity}</span>
+              </div>
             </TableHead>
-            <TableHead>
-              {mounted && editingHeader === 'rate' ? (
-                <Input
-                  value={headers.rate}
-                  onChange={(e) => {
-                    const newValue = e.target.value;
-                    setHeaders(h => ({ ...h, rate: newValue }));
-                    form.setValue('itemLabels.price', newValue, { shouldDirty: true });
-                  }}
-                  onBlur={() => setEditingHeader(null)}
-                  autoFocus
-                />
-              ) : (
-                <button
-                  onClick={() => mounted && setEditingHeader('rate')}
-                  className="hover:text-primary"
-                >
-                  {headers.rate}
-                </button>
-              )}
+            <TableHead className="w-[20%]">
+              <div className="flex items-center gap-2">
+                <span>{headers.rate}</span>
+              </div>
             </TableHead>
-            <TableHead className="text-right">
-              {mounted && editingHeader === 'amount' ? (
-                <Input
-                  value={headers.amount}
-                  onChange={(e) => {
-                    const newValue = e.target.value;
-                    setHeaders(h => ({ ...h, amount: newValue }));
-                    form.setValue('itemLabels.amount', newValue, { shouldDirty: true });
-                  }}
-                  onBlur={() => setEditingHeader(null)}
-                  autoFocus
-                />
-              ) : (
-                <button
-                  onClick={() => mounted && setEditingHeader('amount')}
-                  className="hover:text-primary"
-                >
-                  {headers.amount}
-                </button>
-              )}
+            <TableHead className="text-right w-[15%]">
+              <div className="flex items-center justify-end gap-2">
+                <span>{headers.amount}</span>
+              </div>
             </TableHead>
-            <TableHead className="w-[50px]"></TableHead>
+            <TableHead className="w-[10%]" />
           </TableRow>
         </TableHeader>
         <TableBody>
           {items.map((item, index) => (
-            <TableRow key={item.id}>
+            <TableRow key={index}>
               <TableCell>
                 <FormField
                   control={form.control}

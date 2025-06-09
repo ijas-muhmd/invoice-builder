@@ -3,7 +3,6 @@
 import { type UseFormReturn } from "react-hook-form"
 import { type InvoiceFormValues } from "@/app/invoice-schema"
 import { format } from "date-fns"
-import Image from "next/image"
 
 interface PreviewProps {
   form: UseFormReturn<InvoiceFormValues>
@@ -28,9 +27,26 @@ const getCurrencySymbol = (currency: string) => {
 
 export function Preview({ form }: PreviewProps) {
   const data = form.getValues()
-  const subtotal = data.items.reduce((sum, item) => sum + (item.quantity * item.rate), 0)
-  const tax = subtotal * (data.tax / 100)
-  const total = subtotal + tax + data.shipping - data.discount
+  
+  // Check if form is properly initialized
+  if (!data || typeof data !== 'object') {
+    return (
+      <div className="min-h-screen bg-white p-8 max-w-3xl mx-auto text-sm relative flex items-center justify-center">
+        <p className="text-gray-500">Loading preview...</p>
+      </div>
+    )
+  }
+  
+  // Ensure items array exists and has default values
+  const items = data.items || [{ description: "", quantity: 0, rate: 0 }]
+  const subtotal = items.reduce((sum, item) => sum + ((item.quantity || 0) * (item.rate || 0)), 0)
+  const tax = subtotal * ((data.tax || 0) / 100)
+  const shipping = data.shipping || 0
+  const discount = data.discount || 0
+  const total = subtotal + tax + shipping - discount
+
+  // Ensure currency is valid, fallback to EUR if not
+  const currency = data.currency && data.currency.length === 3 ? data.currency : 'EUR'
 
   return (
     <div className="min-h-screen bg-white p-8 max-w-3xl mx-auto text-sm relative">
@@ -38,16 +54,6 @@ export function Preview({ form }: PreviewProps) {
         {/* Header */}
         <div className="flex justify-between items-start mb-8">
           <div>
-            {data.logo && (
-              <div className="mb-4 relative w-32 h-32">
-                <Image
-                  src={data.logo}
-                  alt="Business Logo"
-                  fill
-                  className="object-contain"
-                />
-              </div>
-            )}
             <h1 className="text-2xl font-bold text-gray-900 mb-1">INVOICE</h1>
             <div className="text-gray-600 space-y-2">
               <div>
@@ -56,11 +62,11 @@ export function Preview({ form }: PreviewProps) {
               </div>
               <div>
                 <p className="text-xs font-medium text-gray-500">ISSUE DATE</p>
-                <p>{format(data.date, 'MMM dd, yyyy').toUpperCase()}</p>
+                <p>{data.date && !isNaN(new Date(data.date).getTime()) ? format(new Date(data.date), 'MMM dd, yyyy').toUpperCase() : 'Invalid Date'}</p>
               </div>
               <div>
                 <p className="text-xs font-medium text-gray-500">DUE DATE</p>
-                <p>{format(data.dueDate, 'MMM dd, yyyy').toUpperCase()}</p>
+                <p>{data.dueDate && !isNaN(new Date(data.dueDate).getTime()) ? format(new Date(data.dueDate), 'MMM dd, yyyy').toUpperCase() : 'Invalid Date'}</p>
               </div>
               {data.paymentTerms && (
                 <div>
@@ -82,13 +88,13 @@ export function Preview({ form }: PreviewProps) {
               <div className="flex items-center justify-end mt-1">
                 <div className="w-8 h-8 rounded-full overflow-hidden mr-2 bg-gray-50 border border-gray-100 flex items-center justify-center shadow-sm">
                   <span className="text-sm font-medium text-gray-900">
-                    {getCurrencySymbol(data.currency)}
+                    {getCurrencySymbol(currency)}
                   </span>
                 </div>
                 <p className="font-bold text-xl text-blue-600">
                   {total.toLocaleString('en-US', { 
                     style: 'currency', 
-                    currency: data.currency,
+                    currency: currency,
                     minimumFractionDigits: 2,
                     maximumFractionDigits: 2 
                   })}
@@ -197,12 +203,12 @@ export function Preview({ form }: PreviewProps) {
               </tr>
             </thead>
             <tbody className="text-gray-800">
-              {data.items.map((item, index) => (
+              {items.map((item, index) => (
                 <tr key={index} className="border-b border-gray-200">
                   <td className="py-3">{item.description}</td>
                   <td className="py-3 text-right">{item.quantity}</td>
                   <td className="py-3 text-right">{item.rate.toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
-                  <td className="py-3 text-right">{data.currency} {(item.quantity * item.rate).toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
+                  <td className="py-3 text-right">{currency} {(item.quantity * item.rate).toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
                 </tr>
               ))}
             </tbody>
@@ -213,29 +219,29 @@ export function Preview({ form }: PreviewProps) {
             <div className="w-64 space-y-2">
               <div>
                 <p className="text-xs font-medium text-gray-500">SUBTOTAL</p>
-                <p className="text-right font-medium text-gray-900">{data.currency} {subtotal.toLocaleString('en-US', { minimumFractionDigits: 2 })}</p>
+                <p className="text-right font-medium text-gray-900">{currency} {subtotal.toLocaleString('en-US', { minimumFractionDigits: 2 })}</p>
               </div>
-              {data.tax > 0 && (
+              {tax > 0 && (
                 <div>
                   <p className="text-xs font-medium text-gray-500">TAX ({data.tax}%)</p>
-                  <p className="text-right font-medium text-gray-900">{data.currency} {tax.toLocaleString('en-US', { minimumFractionDigits: 2 })}</p>
+                  <p className="text-right font-medium text-gray-900">{currency} {tax.toLocaleString('en-US', { minimumFractionDigits: 2 })}</p>
                 </div>
               )}
-              {data.shipping > 0 && (
+              {shipping > 0 && (
                 <div>
                   <p className="text-xs font-medium text-gray-500">SHIPPING</p>
-                  <p className="text-right font-medium text-gray-900">{data.currency} {data.shipping.toLocaleString('en-US', { minimumFractionDigits: 2 })}</p>
+                  <p className="text-right font-medium text-gray-900">{currency} {shipping.toLocaleString('en-US', { minimumFractionDigits: 2 })}</p>
                 </div>
               )}
-              {data.discount > 0 && (
+              {discount > 0 && (
                 <div>
                   <p className="text-xs font-medium text-gray-500">DISCOUNT</p>
-                  <p className="text-right font-medium text-gray-900">-{data.currency} {data.discount.toLocaleString('en-US', { minimumFractionDigits: 2 })}</p>
+                  <p className="text-right font-medium text-gray-900">-{currency} {discount.toLocaleString('en-US', { minimumFractionDigits: 2 })}</p>
                 </div>
               )}
               <div className="pt-2 border-t border-gray-200">
                 <p className="text-xs font-medium text-gray-500">TOTAL AMOUNT</p>
-                <p className="text-right font-bold text-gray-900">{data.currency} {total.toLocaleString('en-US', { minimumFractionDigits: 2 })}</p>
+                <p className="text-right font-bold text-gray-900">{currency} {total.toLocaleString('en-US', { minimumFractionDigits: 2 })}</p>
               </div>
             </div>
           </div>

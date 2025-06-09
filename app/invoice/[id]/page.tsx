@@ -112,20 +112,9 @@ export default function EditInvoicePage({ params }: { params: { id: string } }) 
   // Update the initialization of activeFields
   useEffect(() => {
     if (invoice) {
-     
       if (Array.isArray(invoice.activeFields) && invoice.activeFields.length > 0) {
           setActiveFields(invoice.activeFields);
-          
-        }
-      // Load active fields from localStorage specific to the current invoice
-      // const savedFields = localStorage.getItem(`active_custom_fields_${params.id}`);
-      // if (savedFields) {
-      //   const parsedFields = JSON.parse(savedFields);
-      //   setActiveFields(parsedFields);
-      // } else if (Array.isArray(invoice.activeFields) && invoice.activeFields.length > 0) {
-      //   setActiveFields(invoice.activeFields);
-      //   localStorage.setItem(`active_custom_fields_${params.id}`, JSON.stringify(invoice.activeFields));
-      // }
+      }
     }
   }, [invoice, params.id]);
 
@@ -135,76 +124,10 @@ export default function EditInvoicePage({ params }: { params: { id: string } }) 
       ? [...activeFields, fieldId]
       : activeFields.filter(f => f !== fieldId);
     
-    const currentValues = form.getValues();
-    
-    // Ensure we preserve the current values even when fields are toggled
-    const updateData = {
-      ...invoice,
-      ...currentValues,
-      activeFields: newActiveFields,
-      // Always include these fields with their current values or empty strings
-      gst: currentValues.gst || "",
-      taxId: currentValues.taxId || "",
-      vatNumber: currentValues.vatNumber || "",
-      customerId: currentValues.customerId || "",
-      referenceNumber: currentValues.referenceNumber || "",
-      projectCode: currentValues.projectCode || "",
-      bankDetails: currentValues.bankDetails || "",
-      termsAndConditions: currentValues.termsAndConditions || "",
-    };
-
-    // Update the invoice in the context
-    updateInvoice(params.id, updateData);
-
-    // Update localStorage for the current invoice's active fields
-    localStorage.setItem(`active_custom_fields_${params.id}`, JSON.stringify(newActiveFields));
+    // Save active fields to localStorage
+    localStorage.setItem('active_custom_fields', JSON.stringify(newActiveFields));
     setActiveFields(newActiveFields);
-    
-    // Reset form with updated values
-    form.reset(updateData, {
-      keepDefaultValues: true,
-      keepDirty: true,
-      keepValues: true,
-    });
   };
-
-  // Update the autosave effect
-  useEffect(() => {
-    if (!form || !params.id) return;
-
-    const subscription = form.watch((value) => {
-      if (!value || !form.formState.isDirty) return;
-
-      const savedBankDetails = localStorage.getItem('current_bank_details');
-      const bankDetails = savedBankDetails ? JSON.parse(savedBankDetails) : null;
-
-      const updateData = {
-        ...invoice,
-        ...value,
-        date: new Date(value.date?.toISOString() || new Date().toISOString()),
-        dueDate: new Date(value.dueDate?.toISOString() || new Date().toISOString()),
-        selectedBankAccountId: bankDetails?.selectedAccountId,
-        activeFields, // Include current activeFields
-        // Preserve all custom fields
-        gst: value.gst ?? invoice?.gst ?? '',
-        taxId: value.taxId ?? invoice?.taxId ?? '',
-        vatNumber: value.vatNumber ?? invoice?.vatNumber ?? '',
-        customerId: value.customerId ?? invoice?.customerId ?? '',
-        referenceNumber: value.referenceNumber ?? invoice?.referenceNumber ?? '',
-        projectCode: value.projectCode ?? invoice?.projectCode ?? '',
-        bankDetails: value.bankDetails ?? invoice?.bankDetails ?? '',
-        termsAndConditions: value.termsAndConditions ?? invoice?.termsAndConditions ?? '',
-      } as InvoiceFormValues
-
-      const timeoutId = setTimeout(() => {
-        updateInvoice(params.id, updateData);
-      }, 500);
-
-      return () => clearTimeout(timeoutId);
-    });
-
-    return () => subscription.unsubscribe();
-  }, [form, params.id, updateInvoice, invoice, activeFields]);
 
   if (!mounted || !invoice) return null;
 

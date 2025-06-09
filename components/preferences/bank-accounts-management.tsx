@@ -50,6 +50,7 @@ export function BankAccountsManagement() {
       routingNumber: formData.get('routingNumber') as string,
       workspaceId: currentWorkspace.id,
       isDefault: workspaceAccounts.length === 0,
+      balance: parseFloat(formData.get('balance') as string) || 0,
     }
 
     try {
@@ -186,6 +187,20 @@ export function BankAccountsManagement() {
                   />
                 </div>
               </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="balance">Balance</Label>
+                  <Input
+                    id="balance"
+                    name="balance"
+                    type="number"
+                    step="0.01"
+                    defaultValue={editAccount?.balance || 0}
+                    placeholder="e.g., 1000.00"
+                  />
+                </div>
+              </div>
             </div>
 
             <div className="flex justify-end gap-4 pt-4 border-t">
@@ -253,6 +268,7 @@ export function BankAccountsManagement() {
                 <div className="text-sm text-muted-foreground mt-1">
                   {account.bankName} - {account.accountNumber}
                 </div>
+                <div>Balance: {account.balance ?? 0}</div>
               </div>
               <div className="flex items-center gap-2">
                 <Button

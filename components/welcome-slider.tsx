@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { ChevronLeft, ChevronRight, Lock, Cloud, UserX, Database, FileText, Sparkles } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { motion, AnimatePresence } from "framer-motion"
+import { db } from "@/lib/db"
 
 const slides = [
   {
@@ -110,15 +111,18 @@ export function WelcomeSlider({ onComplete }: WelcomeSliderProps) {
   const [mounted, setMounted] = React.useState(false)
 
   React.useEffect(() => {
+    const checkIntro = async () => {
     setMounted(true)
-    const hasSeenIntro = localStorage.getItem('has-seen-intro')
+      const hasSeenIntro = await db.get('settings', 'has-seen-intro')
     if (!hasSeenIntro) {
       setOpen(true)
     }
+    }
+    checkIntro()
   }, [])
 
-  const handleComplete = () => {
-    localStorage.setItem('has-seen-intro', 'true')
+  const handleComplete = async () => {
+    await db.set('settings', 'has-seen-intro', true)
     setOpen(false)
     setTimeout(() => {
       onComplete?.()

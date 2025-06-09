@@ -8,7 +8,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { cn } from "@/lib/utils"
-import { Settings, PaintBucket, FileText, Bell, Lock, Database, Keyboard, Building2 } from "lucide-react"
+import { Settings, PaintBucket, FileText, Bell, Lock, Database, Keyboard, Building2, DollarSign, CreditCard } from "lucide-react"
 import { useState, useEffect } from "react"
 import { AppearancePreferences } from "./preferences/appearance-preferences"
 import { BusinessPreferences } from "./preferences/business-preferences"
@@ -21,10 +21,16 @@ import { Label } from "@/components/ui/label"
 import { toast } from "@/components/ui/use-toast"
 import { BusinessManagement } from "./preferences/business-management"
 import { BankAccountsManagement } from "./preferences/bank-accounts-management"
+import { CurrencySettings } from "@/components/currency-settings"
+import { FinancialPreferences } from "./preferences/financial-preferences"
+import { InvoicePreferences } from "./preferences/invoice-preferences"
+import { PaymentMethodList } from "./payment-method-list"
 
 interface PreferencesDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
+  initialCategory?: string
+  initialItem?: string
 }
 
 interface SidebarItem {
@@ -37,7 +43,7 @@ interface SidebarItem {
   }[]
 }
 
-export function PreferencesDialog({ open, onOpenChange }: PreferencesDialogProps) {
+export function PreferencesDialog({ open, onOpenChange, initialCategory, initialItem }: PreferencesDialogProps) {
   const [showAddBusinessDialog, setShowAddBusinessDialog] = useState(false);
   const [preferences, setPreferences] = useLocalStorage('preferences', {
     pin: '',
@@ -47,41 +53,49 @@ export function PreferencesDialog({ open, onOpenChange }: PreferencesDialogProps
   // Define sidebarItems first
   const sidebarItems: SidebarItem[] = [
     {
-      title: "Appearance",
+      title: "General Settings",
       icon: PaintBucket,
       items: [
         {
-          title: "Theme",
+          title: "Appearance",
           description: "Customize the look and feel of your invoice builder",
           component: <AppearancePreferences />
         }
       ]
     },
     {
-      title: "Business",
+      title: "Business Settings",
       icon: Building2,
       items: [
         {
           title: "Business Profiles",
           description: "Manage business profiles in this workspace",
-          component: <BusinessManagement 
-            showAddDialog={showAddBusinessDialog} 
-            setShowAddDialog={setShowAddBusinessDialog} 
-          />
+          component: <BusinessManagement showAddDialog={showAddBusinessDialog} setShowAddDialog={setShowAddBusinessDialog} />
         }
       ]
     },
-    // {
-    //   title: "Security",
-    //   icon: Lock,
-    //   items: [
-    //     {
-    //       title: "App Protection",
-    //       description: "Set up PIN protection for your data",
-    //       component: <SecurityPreferences />
-    //     }
-    //   ]
-    // },
+    {
+      title: "Invoice Settings",
+      icon: FileText,
+      items: [
+        {
+          title: "Category Management",
+          description: "Manage your invoice and expense categories",
+          component: <InvoicePreferences />
+        }
+      ]
+    },
+    {
+      title: "Finance Settings",
+      icon: DollarSign,
+      items: [
+        {
+          title: "Financial Settings",
+          description: "Manage currency, tax, and financial preferences",
+          component: <FinancialPreferences />
+        }
+      ]
+    },
     {
       title: "Data & Privacy",
       icon: Database,
@@ -101,14 +115,46 @@ export function PreferencesDialog({ open, onOpenChange }: PreferencesDialogProps
           title: "Bank Accounts",
           description: "Manage your bank accounts",
           component: <BankAccountsManagement />
+        },
+        {
+          title: "Payment Methods",
+          description: "Manage your payment methods for expenses and income",
+          component: <PaymentMethodList />
         }
       ]
     }
   ];
 
   // Then use it in state initialization
-  const [selectedCategory, setSelectedCategory] = useState(sidebarItems[0]);
-  const [selectedItem, setSelectedItem] = useState(sidebarItems[0].items[0]);
+  const getInitialCategory = () => {
+    if (initialCategory) {
+      const category = sidebarItems.find(item => item.title === initialCategory)
+      return category || sidebarItems[0]
+    }
+    return sidebarItems[0]
+  }
+
+  const getInitialItem = () => {
+    const category = getInitialCategory()
+    if (initialCategory && initialItem) {
+      const item = category.items.find(item => item.title === initialItem)
+      return item || category.items[0]
+    }
+    return category.items[0]
+  }
+
+  const [selectedCategory, setSelectedCategory] = useState(getInitialCategory);
+  const [selectedItem, setSelectedItem] = useState(getInitialItem);
+
+  // Reset selection when dialog opens with new initial values
+  useEffect(() => {
+    if (open) {
+      const newCategory = getInitialCategory()
+      const newItem = getInitialItem()
+      setSelectedCategory(newCategory)
+      setSelectedItem(newItem)
+    }
+  }, [open, initialCategory, initialItem])
 
   // Autosave when preferences change
   useEffect(() => {

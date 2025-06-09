@@ -65,10 +65,27 @@ export function useAutosave(form: UseFormReturn<InvoiceFormValues>, invoiceId?: 
       timeoutRef.current = setTimeout(() => {
         if (invoiceId) {
           // If editing, update the invoice
+          const savedBankDetails = localStorage.getItem('current_bank_details');
+          const bankDetails = savedBankDetails ? JSON.parse(savedBankDetails) : null;
+          const activeFields = localStorage.getItem('active_custom_fields') 
+            ? JSON.parse(localStorage.getItem('active_custom_fields')!) 
+            : [];
+
           updateInvoice(invoiceId, {
             ...value as InvoiceFormValues,
             date: value.date?.toISOString() || new Date().toISOString(),
             dueDate: value.dueDate?.toISOString() || new Date().toISOString(),
+            selectedBankAccountId: bankDetails?.selectedAccountId,
+            activeFields,
+            // Preserve all custom fields
+            gst: value.gst ?? '',
+            taxId: value.taxId ?? '',
+            vatNumber: value.vatNumber ?? '',
+            customerId: value.customerId ?? '',
+            referenceNumber: value.referenceNumber ?? '',
+            projectCode: value.projectCode ?? '',
+            bankDetails: value.bankDetails ?? '',
+            termsAndConditions: value.termsAndConditions ?? '',
           });
         } else {
           // If new, save as draft
@@ -76,7 +93,7 @@ export function useAutosave(form: UseFormReturn<InvoiceFormValues>, invoiceId?: 
         }
         previousValueRef.current = currentValue;
         setSaving(false);
-      }, 1000); // Increased debounce time to 1 second
+      }, 300); // Reduced debounce time to 300ms for better responsiveness
     });
 
     return () => {

@@ -27,7 +27,7 @@ import { useRouter, useSearchParams } from "next/navigation"
 import { type Invoice } from "@/contexts/invoice-context"
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog"
 import { Card } from "@/components/ui/card"
-import { Settings2, Trash2, Check, X, ArrowUpDown } from "lucide-react"
+import { Settings2, Trash2, Check, X, ArrowUpDown, Copy, Pencil } from "lucide-react"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -62,8 +62,9 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet"
-import { toast } from "react-hot-toast"
+import { toast } from "@/components/ui/use-toast"
 import { useWorkspace } from "@/contexts/workspace-context"
+import { useInvoices } from "@/contexts/invoice-context"
 
 interface InvoiceListProps {
   invoices: Invoice[]
@@ -95,6 +96,7 @@ export function InvoiceList({ invoices: allInvoices, onDelete, onUpdate }: Invoi
     amountRange: [0, 10000] as [number, number],
     customer: "all"
   })
+  const { duplicateInvoice } = useInvoices()
 
   useEffect(() => {
     if (urlStatus) {
@@ -117,7 +119,8 @@ export function InvoiceList({ invoices: allInvoices, onDelete, onUpdate }: Invoi
   const currencySymbol = getCurrencySymbol()
 
   const calculateInvoiceTotal = (invoice: Invoice) => {
-    const subtotal = invoice.items.reduce((sum, item) => 
+    const items = Array.isArray(invoice.items) ? invoice.items : [];
+    const subtotal = items.reduce((sum, item) => 
       sum + (item.quantity * item.rate), 0
     )
     const taxAmount = subtotal * (invoice.tax / 100)
@@ -272,6 +275,37 @@ export function InvoiceList({ invoices: allInvoices, onDelete, onUpdate }: Invoi
         return <div className="text-right">{symbol}{total.toFixed(2)}</div>
       },
     },
+    {
+      id: "actions",
+      cell: ({ row }) => {
+        const invoice = row.original;
+        return (
+          <div className="flex items-center gap-2">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => handleDuplicate(invoice.id)}
+            >
+              <Copy className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => router.push(`/invoice/${invoice.id}`)}
+            >
+              <Pencil className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => onDelete([invoice.id])}
+            >
+              <Trash2 className="h-4 w-4" />
+            </Button>
+          </div>
+        );
+      },
+    },
   ], [])
 
   const table = useReactTable({
@@ -311,9 +345,26 @@ export function InvoiceList({ invoices: allInvoices, onDelete, onUpdate }: Invoi
   }
 
   const customers = useMemo(() => {
-    const unique = new Set(allInvoices.map(inv => inv.to.businessName))
+    const unique = new Set(allInvoices.map(inv => inv.to?.businessName || 'Unknown'))
     return Array.from(unique)
   }, [allInvoices])
+
+  const handleDuplicate = async (id: string) => {
+    try {
+      await duplicateInvoice(id);
+      toast({
+        title: "Invoice duplicated",
+        description: "The invoice has been duplicated successfully.",
+      });
+    } catch (error) {
+      console.error('Error duplicating invoice:', error);
+      toast({
+        title: "Error",
+        description: "Failed to duplicate invoice. Please try again.",
+        variant: "destructive"
+      });
+    }
+  };
 
   return (
     <div>
@@ -467,11 +518,10 @@ export function InvoiceList({ invoices: allInvoices, onDelete, onUpdate }: Invoi
                   <div className="flex flex-col gap-2">
                     <Button 
                       onClick={() => {
-                        // toast({
-                        //   title: "Filters applied",
-                        //   description: "The invoice list has been updated.",
-                        // })
-                        toast.success("The invoice list has been updated.")
+                        toast({
+                          title: "Filters applied",
+                          description: "The invoice list has been updated.",
+                        });
                       }}
                       className="w-full"
                     >
@@ -487,12 +537,11 @@ export function InvoiceList({ invoices: allInvoices, onDelete, onUpdate }: Invoi
                           amountRange: [0, maxAmount] as [number, number],
                           customer: "all"
                         }
-                        setFilters(defaultFilters)
-                        // toast({
-                        //   title: "Filters reset",
-                        //   description: "All filters have been cleared.",
-                        // })
-                        toast.success("All filters have been cleared.")
+                        setFilters(defaultFilters);
+                        toast({
+                          title: "Filters reset",
+                          description: "All filters have been cleared.",
+                        });
                       }}
                     >
                       Reset Filters

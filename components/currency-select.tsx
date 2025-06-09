@@ -10,12 +10,7 @@ import {
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { useFormContext } from "react-hook-form"
 import { type InvoiceFormValues } from "@/app/invoice-schema"
-
-const currencies = [
-  { value: "USD", label: "USD - US Dollar", symbol: "$" },
-  { value: "EUR", label: "EUR - Euro", symbol: "€" },
-  { value: "GBP", label: "GBP - British Pound", symbol: "£" },
-] as const
+import { majorCurrencies } from "@/lib/currencies"
 
 export function CurrencySelect() {
   const form = useFormContext<InvoiceFormValues>()
@@ -34,9 +29,9 @@ export function CurrencySelect() {
               </SelectTrigger>
             </FormControl>
             <SelectContent>
-              {currencies.map((currency) => (
-                <SelectItem key={currency.value} value={currency.value}>
-                  {currency.label}
+              {majorCurrencies.map((currency) => (
+                <SelectItem key={currency.code} value={currency.code}>
+                  {currency.code} {currency.symbol} - {currency.name}
                 </SelectItem>
               ))}
             </SelectContent>

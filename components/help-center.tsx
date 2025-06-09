@@ -11,6 +11,7 @@ import { cn } from "@/lib/utils"
 import { ProductTour } from "@/components/product-tour"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import router from "next/router"
+import { db } from "@/lib/db"
 
 const onboardingSteps = [
   {
@@ -90,18 +91,34 @@ const supportLinks = [
 ]
 
 export function HelpCenter() {
-  const [minimized, setMinimized] = useState(() => {
-    if (typeof window !== 'undefined') {
-      return localStorage.getItem('help-center-minimized') === 'true'
-    }
-    return false
-  })
+  const [minimized, setMinimized] = useState(false)
   const [startTour, setStartTour] = useState(false)
   const [mounted, setMounted] = useState(false)
   const [activeTab, setActiveTab] = useState('getting-started')
   const { businessDetails } = useBusinessDetails()
   const { invoices } = useInvoices()
   const router = useRouter()
+
+  // Load minimized state from IndexedDB
+  useEffect(() => {
+    const loadMinimized = async () => {
+      const saved = await db.get('settings', 'help-center-minimized')
+      if (saved !== undefined) {
+        setMinimized(saved)
+      }
+    }
+    loadMinimized()
+  }, [])
+
+  // Save minimized state to IndexedDB
+  useEffect(() => {
+    const saveMinimized = async () => {
+      if (mounted) {
+        await db.set('settings', 'help-center-minimized', minimized)
+      }
+    }
+    saveMinimized()
+  }, [minimized, mounted])
 
   // Update steps completion status
   const updatedSteps = onboardingSteps.map(step => ({
@@ -111,21 +128,15 @@ export function HelpCenter() {
       : step.id === 'first-invoice'
       ? invoices.length > 0
       : step.id === 'manage-customers'
-      ? mounted ? Boolean(localStorage.getItem('customers')) : false
+      ? mounted ? Boolean(db.get('settings', 'customers')) : false
       : step.id === 'customize-template'
-      ? mounted ? Boolean(localStorage.getItem('invoice-headers')) : false
+      ? mounted ? Boolean(db.get('settings', 'invoice-headers')) : false
       : false
   }))
 
   useEffect(() => {
     setMounted(true)
   }, [])
-
-  useEffect(() => {
-    if (mounted) {
-      localStorage.setItem('help-center-minimized', minimized.toString())
-    }
-  }, [minimized, mounted])
 
   const handleMinimize = () => setMinimized(true)
   const handleMaximize = () => setMinimized(false)

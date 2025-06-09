@@ -1,6 +1,7 @@
 "use client"
 
 import { createContext, useContext, useEffect, useState } from "react"
+import { db } from "@/lib/db"
 
 export interface BusinessDetails {
   name: string
@@ -42,52 +43,75 @@ const WorkspaceContext = createContext<WorkspaceContextType>({
 })
 
 export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
-  const [workspaces, setWorkspaces] = useState<Workspace[]>(() => {
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('workspaces')
-      if (saved) {
-        return JSON.parse(saved)
-      }
-      // Create default personal workspace
-      const defaultWorkspace: Workspace = {
-        id: crypto.randomUUID(),
-        name: 'Personal Workspace',
-        isPersonal: true,
-        businessDetails: {
-          name: '',
-          email: '',
-          address: '',
-          phone: '',
-          taxNumber: '',
-          postalCode: '',
-          logo: '',
-        },
-        createdAt: new Date().toISOString(),
-      }
-      return [defaultWorkspace]
-    }
-    return []
-  })
+  const [workspaces, setWorkspaces] = useState<Workspace[]>([])
+  const [currentWorkspace, setCurrentWorkspace] = useState<Workspace | null>(null)
 
-  const [currentWorkspace, setCurrentWorkspace] = useState<Workspace | null>(() => {
-    if (typeof window !== 'undefined') {
-      const currentId = localStorage.getItem('currentWorkspace')
-      if (currentId && workspaces.length) {
-        return workspaces.find(w => w.id === currentId) || workspaces[0]
-      }
-      return workspaces[0]
-    }
-    return null
-  })
-
+  // Load workspaces from IndexedDB on mount
   useEffect(() => {
-    localStorage.setItem('workspaces', JSON.stringify(workspaces))
+    const loadWorkspaces = async () => {
+      let savedWorkspaces = await db.getAll('workspaces')
+
+      if (!savedWorkspaces || savedWorkspaces.length === 0) {
+        // Create default personal workspace if none exist
+        const defaultWorkspace: Workspace = {
+          id: crypto.randomUUID(),
+          name: 'Personal Workspace',
+          isPersonal: true,
+          businessDetails: {
+            name: '',
+            email: '',
+            address: '',
+            phone: '',
+            taxNumber: '',
+            postalCode: '',
+            logo: '',
+          },
+          createdAt: new Date().toISOString(),
+        }
+        await db.set('workspaces', defaultWorkspace.id, defaultWorkspace)
+        savedWorkspaces = [defaultWorkspace] // Ensure savedWorkspaces contains the newly created one
+      }
+      
+      setWorkspaces(savedWorkspaces)
+      
+      // Set current workspace
+      const currentId = await db.get('settings', 'currentWorkspace')
+      if (currentId) {
+        const workspace = savedWorkspaces.find((w: Workspace) => w.id === currentId)
+        if (workspace) {
+          setCurrentWorkspace(workspace)
+        } else {
+          // If currentId doesn't match an existing workspace, default to the first one
+          setCurrentWorkspace(savedWorkspaces[0])
+        }
+      } else {
+        // Default to the first workspace if no currentId is set
+        setCurrentWorkspace(savedWorkspaces[0])
+      }
+    }
+    loadWorkspaces()
+  }, []) // Empty dependency array means this runs once on mount
+
+  // Save workspaces to IndexedDB when they change
+  useEffect(() => {
+    const saveWorkspaces = async () => {
+      if (workspaces.length > 0) {
+        await Promise.all(workspaces.map(workspace => 
+          db.set('workspaces', workspace.id, workspace)
+        ))
+      }
+    }
+    saveWorkspaces()
   }, [workspaces])
 
+  // Save current workspace ID to IndexedDB when it changes
   useEffect(() => {
+    const saveCurrentWorkspace = async () => {
     if (currentWorkspace) {
-      localStorage.setItem('currentWorkspace', currentWorkspace.id)
+        await db.set('settings', 'currentWorkspace', currentWorkspace.id)
+      }
     }
+    saveCurrentWorkspace()
   }, [currentWorkspace])
 
   const addWorkspace = (workspace: Omit<Workspace, 'id' | 'createdAt'>) => {
@@ -123,10 +147,14 @@ export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
-  const deleteWorkspace = (id: string) => {
+  const deleteWorkspace = async (id: string) => {
     setWorkspaces(prev => prev.filter(workspace => workspace.id !== id))
+    await db.delete('workspaces', id)
     if (currentWorkspace?.id === id) {
-      setCurrentWorkspace(workspaces[0])
+      setCurrentWorkspace(prev => {
+        const remaining = workspaces.filter(workspace => workspace.id !== id)
+        return remaining.length > 0 ? remaining[0] : null
+      })
     }
   }
 

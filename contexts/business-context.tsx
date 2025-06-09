@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useEffect, useState } from "react"
 import { useWorkspace } from "./workspace-context"
+import { db } from "../lib/db"
 
 export interface Business {
   id: string
@@ -42,21 +43,29 @@ const BusinessContext = createContext<BusinessContextType>({
 
 export function BusinessProvider({ children }: { children: React.ReactNode }) {
   const { currentWorkspace } = useWorkspace()
-  const [businesses, setBusinesses] = useState<Business[]>(() => {
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('businesses')
-      console.log('Loading businesses from storage:', saved)
-      return saved ? JSON.parse(saved) : []
-    }
-    return []
-  })
+  const [businesses, setBusinesses] = useState<Business[]>([])
 
-  // Save businesses to localStorage whenever they change
+  // Load businesses from IndexedDB on mount
   useEffect(() => {
-    if (businesses.length > 0) {
-      console.log('Saving businesses to storage:', businesses)
-      localStorage.setItem('businesses', JSON.stringify(businesses))
+    const loadBusinesses = async () => {
+      const saved = await db.getAll('businesses')
+      if (saved) {
+        setBusinesses(saved)
+      }
     }
+    loadBusinesses()
+  }, [])
+
+  // Save businesses to IndexedDB when they change
+  useEffect(() => {
+    const saveBusinesses = async () => {
+    if (businesses.length > 0) {
+        await Promise.all(businesses.map(business => 
+          db.set('businesses', business.id, business)
+        ))
+    }
+    }
+    saveBusinesses()
   }, [businesses])
 
   const addBusiness = (businessData: Omit<Business, 'id' | 'createdAt'>) => {
@@ -71,7 +80,6 @@ export function BusinessProvider({ children }: { children: React.ReactNode }) {
     }
 
     setBusinesses(prev => [...prev, newBusiness])
-    console.log('Added business:', newBusiness)
     return newBusiness
   }
 

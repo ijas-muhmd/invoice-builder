@@ -64,7 +64,8 @@ export default function KanbanBoard() {
   }, [])
 
   const calculateInvoiceTotal = (invoice: any) => {
-    const subtotal = invoice.items.reduce((sum: number, item: any) => 
+    const items = Array.isArray(invoice.items) ? invoice.items : [];
+    const subtotal = items.reduce((sum: number, item: any) => 
       sum + (item.quantity * item.rate), 0
     )
     const taxAmount = subtotal * (invoice.tax / 100)
@@ -153,7 +154,7 @@ export default function KanbanBoard() {
                                     <div className="flex-1" onClick={() => router.push(`/invoice/${invoice.id}`)}>
                                       <div className="font-medium">{invoice.number}</div>
                                       <div className="text-sm text-muted-foreground">
-                                        {invoice.to.businessName}
+                                        {invoice.to?.businessName || "Unknown"}
                                       </div>
                                     </div>
                                     <div className="flex items-center space-x-2">

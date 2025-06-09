@@ -9,10 +9,10 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
   metadataBase: new URL('https://invoicebuilder.com'),
   title: {
-    default: "Free Invoice Generator | Create Professional Invoices Online Instantly",
-    template: "%s | Invoice Builder"
+    default: "Free Invoice Generator & Expense Tracker | Business Management Suite",
+    template: "%s | Business Suite"
   },
-  description: "Create professional invoices instantly with our free invoice builder. Support for USD, EUR, GBP, INR. Perfect for freelancers, small businesses, and entrepreneurs. Works offline, no sign-up required.",
+  description: "Complete business management suite with invoice generator and expense tracker. Create professional invoices instantly and track business expenses. Support for multiple currencies. Perfect for freelancers, small businesses, and entrepreneurs. Works offline, no sign-up required.",
   keywords: [
     // Product Core Terms
     "invoice generator",
@@ -23,6 +23,12 @@ export const metadata: Metadata = {
     "billing system",
     "invoicing tool",
     "invoice template maker",
+    "expense tracker",
+    "expense management",
+    "business expense tracker",
+    "expense reporting",
+    "receipt tracking",
+    "business finance tools",
 
     // Feature-based Keywords
     "customizable invoice templates",
@@ -90,13 +96,13 @@ export const metadata: Metadata = {
     telephone: false,
   },
   manifest: '/manifest.json',
-  openGraph: {
-    type: 'website',
-    locale: 'en_US',
-    url: 'https://invoicebuilder.com',
-    title: 'Free Invoice Generator | Create Professional Invoices Online Instantly',
-    description: 'Create professional invoices instantly with our free invoice builder. Support for multiple currencies. Perfect for freelancers and businesses.',
-    siteName: 'Invoice Builder - Free Professional Invoice Generator',
+      openGraph: {
+      type: 'website',
+      locale: 'en_US',
+      url: 'https://invoicebuilder.com',
+      title: 'Free Invoice Generator & Expense Tracker | Business Management Suite',
+      description: 'Complete business management suite with invoice generator and expense tracker. Create professional invoices and track expenses. Perfect for freelancers and businesses.',
+      siteName: 'Business Suite - Invoice Generator & Expense Tracker',
     images: [
       {
         url: '/og-image.png',
@@ -106,10 +112,10 @@ export const metadata: Metadata = {
       }
     ],
   },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'Free Invoice Generator | Create Professional Invoices Online Instantly',
-    description: 'Create professional invoices instantly. Support for USD, EUR, GBP, INR. Perfect for freelancers and businesses.',
+      twitter: {
+      card: 'summary_large_image',
+      title: 'Free Invoice Generator & Expense Tracker | Business Management Suite',
+      description: 'Complete business management suite - create invoices and track expenses. Support for multiple currencies. Perfect for freelancers and businesses.',
     images: ['/twitter-image.png'],
     creator: '@invoicebuilder',
     site: '@invoicebuilder'
@@ -186,7 +192,7 @@ export default function RootLayout({
             __html: JSON.stringify({
               "@context": "https://schema.org",
               "@type": "WebApplication",
-              "name": "Invoicify",
+              "name": "Business Suite",
               "applicationCategory": "BusinessApplication",
               "operatingSystem": "All",
               "offers": {
@@ -194,13 +200,15 @@ export default function RootLayout({
                 "price": "0",
                 "priceCurrency": "USD"
               },
-              "description": "Create beautiful, professional invoices instantly with our free invoice builder. Works offline, no sign-up required.",
+              "description": "Complete business management suite with invoice generator and expense tracker. Create professional invoices and track business expenses. Works offline, no sign-up required.",
               "browserRequirements": "Requires JavaScript. Requires HTML5.",
-              "softwareVersion": "1.0.0",
+              "softwareVersion": "2.0.0",
               "author": {
                 "@type": "Organization",
-                "name": "Invoicify"
-              }
+                "name": "Business Suite"
+              },
+              "applicationSubCategory": ["InvoiceManagement", "ExpenseTracking", "BusinessFinance"],
+              "featureList": ["Invoice Generation", "Expense Tracking", "Multi-Currency Support", "Offline Mode", "Professional Templates"]
             })
           }}
         />

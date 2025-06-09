@@ -30,7 +30,7 @@ export function InvoiceStats() {
       return workspaceInvoices
         .filter(inv => inv.status === status)
         .reduce((sum, inv) => {
-          const subtotal = inv.items.reduce((s, item) => s + (item.quantity * item.rate), 0)
+          const subtotal = (Array.isArray(inv.items) ? inv.items : []).reduce((s, item) => s + (item.quantity * item.rate), 0)
           const tax = subtotal * (inv.tax / 100)
           return sum + subtotal + tax + inv.shipping - inv.discount
         }, 0)

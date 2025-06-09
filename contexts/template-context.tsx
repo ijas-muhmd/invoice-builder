@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useEffect, useState } from "react"
 import { useWorkspace } from "./workspace-context"
+import { db } from '@/lib/db'
 
 export interface CustomField {
   id: string
@@ -99,20 +100,29 @@ const standardTemplate: Omit<Template, 'id' | 'workspaceId' | 'createdAt'> = {
 
 export function TemplateProvider({ children }: { children: React.ReactNode }) {
   const { currentWorkspace } = useWorkspace()
-  const [templates, setTemplates] = useState<Template[]>(() => {
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('invoice-templates')
+  const [templates, setTemplates] = useState<Template[]>([])
+
+  // Load templates from IndexedDB on mount
+  useEffect(() => {
+    const loadTemplates = async () => {
+      const saved = await db.getAll('templates')
       if (saved) {
-        return JSON.parse(saved)
+        setTemplates(saved)
       }
     }
-    return []
-  })
+    loadTemplates()
+  }, [])
 
+  // Save templates to IndexedDB when they change
   useEffect(() => {
+    const saveTemplates = async () => {
     if (templates.length > 0) {
-      localStorage.setItem('invoice-templates', JSON.stringify(templates))
+        await Promise.all(templates.map(template => 
+          db.set('templates', template.id, template)
+        ))
+      }
     }
+    saveTemplates()
   }, [templates])
 
   const addTemplate = (templateData: Omit<Template, 'id' | 'createdAt'>) => {

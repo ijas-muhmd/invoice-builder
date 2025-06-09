@@ -33,14 +33,14 @@ export function SpotlightSearch() {
         type: 'invoice' as const,
         id: invoice.id,
         title: invoice.number,
-        subtitle: `${invoice.to.businessName} - ${format(new Date(invoice.date), 'PP')}`,
+        subtitle: `${invoice.to?.businessName || "Unknown"} - ${format(new Date(invoice.date), 'PP')}`,
         status: invoice.status,
         href: `/invoice/${invoice.id}`,
         workspaceId: invoice.workspaceId,
         workspaceName: workspaces.find(w => w.id === invoice.workspaceId)?.name || 'Unknown',
         keywords: [
           invoice.number,
-          invoice.to.businessName,
+          invoice.to?.businessName || "Unknown",
           invoice.status,
           format(new Date(invoice.date), 'PP'),
         ].join(' ').toLowerCase()

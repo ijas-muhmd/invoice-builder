@@ -3,6 +3,8 @@
 import { createContext, useContext, useEffect, useState } from "react"
 import { useWorkspace } from "@/contexts/workspace-context"
 import { v4 as uuidv4 } from 'uuid'
+import { db } from '@/lib/db'
+import { useFinancial } from "@/contexts/financial-context"
 
 export interface BankAccount {
   id: string
@@ -15,6 +17,7 @@ export interface BankAccount {
   routingNumber?: string
   isDefault?: boolean
   workspaceId: string
+  balance?: number
 }
 
 interface BankAccountsContextType {
@@ -39,23 +42,57 @@ const BankAccountsContext = createContext<BankAccountsContextType>({
 
 export function BankAccountsProvider({ children }: { children: React.ReactNode }) {
   const { currentWorkspace } = useWorkspace()
-  const [bankAccounts, setBankAccounts] = useState<BankAccount[]>(() => {
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('bank_accounts')
-      return saved ? JSON.parse(saved) : []
-    }
-    return []
-  })
+  const { transactions } = useFinancial()
+  const [bankAccounts, setBankAccounts] = useState<BankAccount[]>([])
 
+  // Load bank accounts from IndexedDB on mount
   useEffect(() => {
-    localStorage.setItem('bank_accounts', JSON.stringify(bankAccounts))
+    const loadBankAccounts = async () => {
+      const saved = await db.getAll('bank_accounts')
+      if (saved) {
+        setBankAccounts(saved)
+    }
+    }
+    loadBankAccounts()
+  }, [])
+
+  // Save bank accounts to IndexedDB when they change
+  useEffect(() => {
+    const saveBankAccounts = async () => {
+      if (bankAccounts.length > 0) {
+        await Promise.all(bankAccounts.map(account => 
+          db.set('bank_accounts', account.id, account)
+        ))
+      }
+    }
+    saveBankAccounts()
   }, [bankAccounts])
+
+  // Update account balances when transactions change
+  useEffect(() => {
+    const updateBalances = async () => {
+      const updatedAccounts = bankAccounts.map(account => {
+        const accountTransactions = transactions.filter(t => t.paymentMethodId === account.id);
+        const balance = accountTransactions.reduce((sum, t) => {
+          const amount = t.baseCurrencyAmount ?? t.amount;
+          return sum + (t.type === 'income' ? amount : -amount);
+        }, account.balance ?? 0);
+
+        return { ...account, balance };
+      });
+
+      setBankAccounts(updatedAccounts);
+    };
+
+    updateBalances();
+  }, [transactions]);
 
   const addBankAccount = (account: Omit<BankAccount, 'id'>) => {
     const newAccount = {
       ...account,
       id: uuidv4(),
       isDefault: account.isDefault ?? bankAccounts.length === 0,
+      balance: account.balance ?? 0,
     }
     setBankAccounts(prev => [...prev, newAccount])
     return newAccount

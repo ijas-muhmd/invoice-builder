@@ -11,13 +11,26 @@ import { useRouter } from "next/navigation"
 import { cn } from "@/lib/utils"
 import { ProductTour } from "@/components/product-tour"
 import router from "next/router"
+import { db } from "@/lib/db"
+import { Building2, FileText, Users, PaintBucket } from "lucide-react"
 
-const steps = [
+interface Step {
+  id: string
+  title: string
+  description: string
+  completed: boolean
+  icon: React.ComponentType
+  action?: () => void
+  href?: string
+}
+
+const initialSteps: Step[] = [
   {
     id: 'business-profile',
     title: 'Set up your business profile',
-    description: 'Add your business details to use them in your invoices',
+    description: 'Add your business details to appear on invoices',
     completed: false,
+    icon: Building2,
     action: () => {
       const profileMenu = document.querySelector('[data-tour="profile"]')
       if (profileMenu) {
@@ -30,67 +43,87 @@ const steps = [
   {
     id: 'first-invoice',
     title: 'Create your first invoice',
-    description: 'Create and save your first invoice',
+    description: 'Create and send your first invoice to a client',
     completed: false,
+    icon: FileText,
     action: () => router.push('/'),
     href: '/'
   },
   {
     id: 'manage-customers',
     title: 'Manage your customers',
-    description: 'Add and manage your customer list',
+    description: 'Add and manage your customer information',
     completed: false,
+    icon: Users,
     action: () => router.push('/customers'),
     href: '/customers'
   },
   {
     id: 'customize-template',
-    title: 'Customize invoice template',
-    description: 'Personalize your invoice with your logo and custom fields',
+    title: 'Customize your invoice template',
+    description: 'Customize the look and feel of your invoices',
     completed: false,
+    icon: PaintBucket,
     action: () => router.push('/'),
     href: '/'
-  },
-] as const
+  }
+]
 
 export function OnboardingChecklist() {
-  const [minimized, setMinimized] = useState(() => {
-    if (typeof window !== 'undefined') {
-      return localStorage.getItem('checklist-minimized') === 'true'
-    }
-    return false
-  })
+  const [minimized, setMinimized] = useState(false)
   const [startTour, setStartTour] = useState(false)
   const [mounted, setMounted] = useState(false)
   const { businessDetails } = useBusinessDetails()
   const { invoices } = useInvoices()
   const router = useRouter()
+  const [steps, setSteps] = useState<Step[]>(initialSteps)
+
+  // Load minimized state from IndexedDB
+  useEffect(() => {
+    const loadMinimized = async () => {
+      const saved = await db.get('settings', 'checklist-minimized')
+      if (saved !== undefined) {
+        setMinimized(saved)
+      }
+    }
+    loadMinimized()
+  }, [])
+
+  // Save minimized state to IndexedDB
+  useEffect(() => {
+    const saveMinimized = async () => {
+      if (mounted) {
+        await db.set('settings', 'checklist-minimized', minimized)
+      }
+    }
+    saveMinimized()
+  }, [minimized, mounted])
 
   // Update steps completion status
-  const updatedSteps = steps.map(step => ({
+  useEffect(() => {
+    const updateSteps = async () => {
+      const updatedSteps = await Promise.all(initialSteps.map(async (step: Step) => ({
     ...step,
     completed: step.id === 'business-profile' 
       ? Boolean(businessDetails.name && businessDetails.email && businessDetails.address)
       : step.id === 'first-invoice'
       ? invoices.length > 0
       : step.id === 'manage-customers'
-      ? mounted ? Boolean(localStorage.getItem('customers')) : false
+          ? mounted ? Boolean(await db.get('settings', 'customers')) : false
       : step.id === 'customize-template'
-      ? mounted ? Boolean(localStorage.getItem('invoice-headers')) : false
+          ? mounted ? Boolean(await db.get('settings', 'invoice-headers')) : false
       : false
-  }))
+      })))
+      setSteps(updatedSteps)
+    }
+    updateSteps()
+  }, [businessDetails, invoices, mounted])
 
   useEffect(() => {
     setMounted(true)
   }, [])
 
-  useEffect(() => {
-    if (mounted) {
-      localStorage.setItem('checklist-minimized', minimized.toString())
-    }
-  }, [minimized, mounted])
-
-  const allStepsCompleted = updatedSteps.every(step => step.completed)
+  const allStepsCompleted = steps.every(step => step.completed)
   if (allStepsCompleted) return null
 
   const handleMinimize = () => {
@@ -112,8 +145,8 @@ export function OnboardingChecklist() {
 
   if (!mounted) return null
 
-  const completedSteps = updatedSteps.filter(step => step.completed).length
-  const progress = (completedSteps / updatedSteps.length) * 100
+  const completedSteps = steps.filter(step => step.completed).length
+  const progress = (completedSteps / steps.length) * 100
 
   return (
     <>
@@ -140,11 +173,11 @@ export function OnboardingChecklist() {
 
         <Progress value={progress} className="h-2 mb-4" />
         <div className="text-sm text-muted-foreground mb-4">
-          {completedSteps} of {updatedSteps.length} completed
+          {completedSteps} of {steps.length} completed
         </div>
 
         <div className="space-y-4">
-          {updatedSteps.map((step) => (
+          {steps.map((step) => (
             <div 
               key={step.id} 
               className={cn(
