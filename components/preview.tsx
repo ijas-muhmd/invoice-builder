@@ -264,6 +264,20 @@ export function Preview({ form }: PreviewProps) {
             <p className="text-gray-600 text-sm">{data.notes}</p>
           </div>
         )}
+        {/* Signature Section */}
+        {(data.typedSignature || data.uploadedSignature) && (
+          <div className="mb-8">
+            <h2 className="text-xs font-medium text-gray-500 mb-2">SIGNATURE</h2>
+            {data.typedSignature && (
+              <div className="italic text-lg font-signature text-gray-700">{data.typedSignature}</div>
+            )}
+            {data.uploadedSignature && (
+              <div className="mt-2">
+                <img src={data.uploadedSignature} alt="Signature" className="h-16" />
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Terms & Conditions Section */}
         {data.termsAndConditions && (

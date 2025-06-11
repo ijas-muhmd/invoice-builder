@@ -82,95 +82,106 @@ export function InvoiceItems({ form, items, onAddItem, onRemoveItem }: InvoiceIt
   const currency = form.watch('currency')
   const currencySymbol = currency === 'USD' ? '$' : currency === 'EUR' ? '€' : '£'
 
+  // Add support for dynamic columns
+  const [customColumns, setCustomColumns] = useState<string[]>([]);
+
+  const handleAddColumn = () => {
+    const name = prompt('Enter new column name:');
+    if (name && !headers[name]) {
+      setHeaders({ ...headers, [name]: name.toUpperCase() });
+      setCustomColumns([...customColumns, name]);
+      // Add the new field to each item
+      items.forEach((item, idx) => {
+        if (!(name in item)) {
+          form.setValue(`items.${idx}.${name}`, '');
+        }
+      });
+    }
+  };
+
   return (
     <Card className="p-6">
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead className="w-[40%]">
-              <div className="flex items-center gap-2">
-                <span>{headers.description}</span>
-              </div>
+            {Object.entries(headers).map(([key, value]) => (
+              <TableHead key={key} className="w-[15%]">
+                <div className="flex items-center gap-2 group relative">
+                  {editingHeader === key ? (
+                    <Input
+                      autoFocus
+                      value={value}
+                      onChange={e => {
+                        setHeaders({ ...headers, [key]: e.target.value });
+                        form.setValue(`itemLabels.${key}`, e.target.value, { shouldDirty: true });
+                      }}
+                      onBlur={() => setEditingHeader(null)}
+                      onKeyDown={e => e.key === 'Enter' && setEditingHeader(null)}
+                      className="w-32 text-xs"
+                    />
+                  ) : (
+                    <span
+                      className="cursor-pointer group-hover:underline flex items-center"
+                      onClick={() => setEditingHeader(key as keyof Headers)}
+                    >
+                      {value}
+                      <svg className="ml-1 h-3 w-3 opacity-0 group-hover:opacity-60 transition-opacity" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M15.232 5.232l3.536 3.536M9 13l6.586-6.586a2 2 0 112.828 2.828L11.828 15.828a4 4 0 01-2.828 1.172H7v-2a4 4 0 011.172-2.828z" /></svg>
+                      {/* Delete icon for custom columns, only on hover */}
+                      {customColumns.includes(key) && (
+                        <button
+                          type="button"
+                          className="ml-1 opacity-0 group-hover:opacity-80 transition-opacity"
+                          onClick={e => {
+                            e.stopPropagation();
+                            // Remove from headers
+                            const newHeaders = { ...headers };
+                            delete newHeaders[key];
+                            setHeaders(newHeaders);
+                            // Remove from customColumns
+                            setCustomColumns(customColumns.filter(col => col !== key));
+                            // Remove from all items
+                            items.forEach((item, idx) => {
+                              const newItem = { ...item };
+                              delete newItem[key];
+                              form.setValue(`items.${idx}`, newItem, { shouldDirty: true });
+                            });
+                          }}
+                          title="Remove column"
+                        >
+                          <svg className="h-3 w-3 text-red-500" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+                        </button>
+                      )}
+                    </span>
+                  )}
+                </div>
+              </TableHead>
+            ))}
+            <TableHead className="w-[5%]">
+              <Button type="button" size="icon" variant="ghost" onClick={handleAddColumn} title="Add column">
+                <span className="text-lg">+</span>
+              </Button>
             </TableHead>
-            <TableHead className="w-[15%]">
-              <div className="flex items-center gap-2">
-                <span>{headers.quantity}</span>
-              </div>
-            </TableHead>
-            <TableHead className="w-[20%]">
-              <div className="flex items-center gap-2">
-                <span>{headers.rate}</span>
-              </div>
-            </TableHead>
-            <TableHead className="text-right w-[15%]">
-              <div className="flex items-center justify-end gap-2">
-                <span>{headers.amount}</span>
-              </div>
-            </TableHead>
-            <TableHead className="w-[10%]" />
           </TableRow>
         </TableHeader>
         <TableBody>
           {items.map((item, index) => (
             <TableRow key={index}>
-              <TableCell>
-                <FormField
-                  control={form.control}
-                  name={`items.${index}.description`}
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormControl>
-                        <Input placeholder="Item description" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </TableCell>
-              <TableCell>
-                <FormField
-                  control={form.control}
-                  name={`items.${index}.quantity`}
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormControl>
-                        <Input
-                          type="number"
-                          min="0"
-                          className="w-24"
-                          {...field}
-                          onChange={e => field.onChange(parseFloat(e.target.value))}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </TableCell>
-              <TableCell>
-                <FormField
-                  control={form.control}
-                  name={`items.${index}.rate`}
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormControl>
-                        <Input
-                          type="number"
-                          min="0"
-                          step="0.01"
-                          className="w-32"
-                          {...field}
-                          onChange={e => field.onChange(parseFloat(e.target.value))}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </TableCell>
-              <TableCell className="text-right">
-                {currencySymbol}{((form.watch(`items.${index}.quantity`) || 0) * (form.watch(`items.${index}.rate`) || 0)).toFixed(2)}
-              </TableCell>
+              {Object.keys(headers).map((key) => (
+                <TableCell key={key}>
+                  <FormField
+                    control={form.control}
+                    name={`items.${index}.${key}`}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <Input placeholder={headers[key]} {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </TableCell>
+              ))}
               <TableCell>
                 <Button
                   type="button"

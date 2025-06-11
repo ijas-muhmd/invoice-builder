@@ -179,12 +179,12 @@ export default function IncomePage() {
   const receivedIncome = income.filter(inc => inc.status === 'paid')
 
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-row">
+    <div className="min-h-screen bg-background flex flex-row">
       {/* Main Content */}
       <div className="flex-1 px-4 py-6 max-w-6xl mx-auto">
         {/* Page Title and Action Buttons */}
         <div className="mb-8 flex items-center justify-between">
-          <h1 className="text-2xl font-semibold text-gray-900">Income</h1>
+          <h1 className="text-2xl font-semibold text-foreground">Income</h1>
           <div className="flex space-x-3">
             <Dialog open={showIncomeForm} onOpenChange={setShowIncomeForm}>
               <DialogTrigger asChild>
@@ -292,14 +292,14 @@ export default function IncomePage() {
         {/* All Income List - Main Table */}
         <div className="mb-10">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-lg font-medium text-gray-900">All Income Records</h2>
+            <h2 className="text-lg font-medium text-foreground">All Income Records</h2>
             <Button variant="ghost" size="sm" className="text-blue-600 hover:text-blue-700">
               View analytics
               <ChevronRight className="h-4 w-4 ml-1" />
             </Button>
           </div>
 
-          <Card className="border border-gray-200 bg-white shadow-md">
+          <Card className="border border-border bg-card shadow-md">
             <CardContent className="p-0">
               {filteredIncome.length > 0 ? (
                 <IncomeList
@@ -307,10 +307,10 @@ export default function IncomePage() {
                   onEdit={handleEditIncome}
                 />
               ) : (
-                <div className="text-center py-16 text-gray-500">
+                <div className="text-center py-16 text-muted-foreground">
                   <TrendingUp className="h-16 w-16 mx-auto mb-6 text-gray-300" />
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">No income records yet</h3>
-                  <p className="text-sm text-gray-500 mb-6">Start tracking your income by adding your first record</p>
+                  <h3 className="text-lg font-medium text-foreground mb-2">No income records yet</h3>
+                  <p className="text-sm text-muted-foreground mb-6">Start tracking your income by adding your first record</p>
                   <Button 
                     onClick={handleAddIncome}
                     className="bg-green-600 hover:bg-green-700 text-white"
@@ -328,11 +328,11 @@ export default function IncomePage() {
       {/* Hidden element for PDF export */}
       <div ref={exportRef} className="hidden p-8">
         <h1 className="text-2xl font-bold mb-4">Income Report</h1>
-        <p className="text-gray-600 mb-6">Generated on: {format(new Date(), 'MMM dd, yyyy HH:mm')}</p>
+        <p className="text-muted-foreground mb-6">Generated on: {format(new Date(), 'MMM dd, yyyy HH:mm')}</p>
         {filteredIncome.length > 0 ? (
           <table className="w-full border-collapse">
             <thead>
-              <tr className="border-b border-gray-300">
+              <tr className="border-b border-border">
                 <th className="text-left py-2">Date</th>
                 <th className="text-left py-2">Title</th>
                 <th className="text-left py-2">Category</th>
@@ -342,7 +342,7 @@ export default function IncomePage() {
             </thead>
             <tbody>
               {filteredIncome.map(inc => (
-                <tr key={inc.id} className="border-b border-gray-200">
+                <tr key={inc.id} className="border-b border-border">
                   <td className="py-2">{format(new Date(inc.date), 'MMM dd, yyyy')}</td>
                   <td className="py-2">{inc.title}</td>
                   <td className="py-2">{incomeCategories.find(cat => cat.id === inc.category)?.name || 'N/A'}</td>
@@ -353,124 +353,121 @@ export default function IncomePage() {
             </tbody>
           </table>
         ) : (
-          <p className="text-center text-gray-500">No income to export with current filters.</p>
+          <p className="text-center text-muted-foreground">No income to export with current filters.</p>
         )}
       </div>
 
       {/* Right Sidebar */}
-      <aside className="w-[340px] border-l bg-white/80 px-4 py-6 flex flex-col gap-8 overflow-y-auto sticky top-0 h-screen">
+      <aside className="w-[340px] border-l bg-card px-4 py-6 flex flex-col gap-8 overflow-y-auto sticky top-0 h-screen">
         {/* Summary Block */}
         <div className="mb-8">
           <div className="flex items-baseline space-x-2 mb-2">
-            <span className="text-5xl font-light text-green-600">
+            <span className="text-5xl font-light text-green-600 dark:text-green-400">
               ₹{totalIncome.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
             </span>
             <Button variant="ghost" size="sm" className="p-1">
-              <ChevronRight className="h-4 w-4 text-gray-400" />
+              <ChevronRight className="h-4 w-4 text-muted-foreground" />
             </Button>
           </div>
-          <div className="flex items-center space-x-4 text-sm text-gray-500 mb-2">
+          <div className="flex items-center space-x-4 text-sm text-muted-foreground mb-2">
             <span>Total income earned</span>
-            <span className="text-green-600">+{income.length} records</span>
+            <span className="text-green-600 dark:text-green-400">+{income.length} records</span>
           </div>
         </div>
 
         {/* Summary Cards */}
         <div className="mb-4 space-y-4">
           {/* This Month */}
-          <Card className="border border-green-200 bg-gradient-to-br from-green-50 to-emerald-50 hover:shadow-lg transition-all duration-200 shadow-sm">
+          <Card className="border border-border bg-card hover:shadow-lg transition-all duration-200 shadow-sm">
             <CardContent className="p-6">
               <div className="flex items-center justify-between mb-4">
-                <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
-                  <TrendingUp className="h-5 w-5 text-green-600" />
+                <div className="w-10 h-10 bg-green-100 dark:bg-green-900/20 rounded-full flex items-center justify-center">
+                  <TrendingUp className="h-5 w-5 text-green-600 dark:text-green-400" />
                 </div>
-                <span className="text-2xl font-light text-green-600">
+                <span className="text-2xl font-light text-green-600 dark:text-green-400">
                   ₹{monthlyIncome.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                 </span>
               </div>
               <div>
-                <p className="text-gray-900 font-medium">This Month</p>
-                <p className="text-sm text-gray-500">{currentMonth}</p>
+                <p className="text-foreground font-medium">This Month</p>
+                <p className="text-sm text-muted-foreground">{currentMonth}</p>
               </div>
             </CardContent>
           </Card>
 
           {/* Pending Income */}
-          <Card className="border border-yellow-200 bg-gradient-to-br from-yellow-50 to-amber-50 hover:shadow-lg transition-all duration-200 shadow-sm">
+          <Card className="border border-border bg-card hover:shadow-lg transition-all duration-200 shadow-sm">
             <CardContent className="p-6">
               <div className="flex items-center justify-between mb-4">
-                <div className="w-10 h-10 bg-yellow-100 rounded-full flex items-center justify-center">
-                  <TrendingUp className="h-5 w-5 text-yellow-600" />
+                <div className="w-10 h-10 bg-yellow-100 dark:bg-yellow-900/20 rounded-full flex items-center justify-center">
+                  <TrendingUp className="h-5 w-5 text-yellow-600 dark:text-yellow-400" />
                 </div>
-                <span className="text-2xl font-light text-yellow-600">
+                <span className="text-2xl font-light text-yellow-600 dark:text-yellow-400">
                   ₹{pendingIncome.reduce((sum, inc) => sum + inc.inrAmount, 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                 </span>
               </div>
               <div>
-                <p className="text-gray-900 font-medium">Pending</p>
-                <p className="text-sm text-gray-500">{pendingIncome.length} awaiting payment</p>
+                <p className="text-foreground font-medium">Pending</p>
+                <p className="text-sm text-muted-foreground">{pendingIncome.length} awaiting payment</p>
               </div>
             </CardContent>
           </Card>
 
           {/* Received Income */}
-          <Card className="border border-green-200 bg-gradient-to-br from-green-50 to-emerald-50 hover:shadow-lg transition-all duration-200 shadow-sm">
+          <Card className="border border-border bg-card hover:shadow-lg transition-all duration-200 shadow-sm">
             <CardContent className="p-6">
               <div className="flex items-center justify-between mb-4">
-                <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
-                  <TrendingUp className="h-5 w-5 text-green-600" />
+                <div className="w-10 h-10 bg-green-100 dark:bg-green-900/20 rounded-full flex items-center justify-center">
+                  <TrendingUp className="h-5 w-5 text-green-600 dark:text-green-400" />
                 </div>
-                <span className="text-2xl font-light text-green-600">
+                <span className="text-2xl font-light text-green-600 dark:text-green-400">
                   ₹{receivedIncome.reduce((sum, inc) => sum + inc.inrAmount, 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                 </span>
               </div>
               <div>
-                <p className="text-gray-900 font-medium">Received</p>
-                <p className="text-sm text-gray-500">{receivedIncome.length} completed payments</p>
+                <p className="text-foreground font-medium">Received</p>
+                <p className="text-sm text-muted-foreground">{receivedIncome.length} completed payments</p>
               </div>
             </CardContent>
           </Card>
         </div>
 
-        {/* Top Categories Section - not applicable for income */}
-        {/* This section can be removed or repurposed for income categories if needed */}
-        
         {/* Right Sidebar - Financial Health Indicators (Additional Insights) */}
         <div className="mb-4">
-          <h2 className="text-lg font-medium text-gray-900 mb-4">Financial Health</h2>
+          <h2 className="text-lg font-medium text-foreground mb-4">Financial Health</h2>
           <div className="space-y-4">
             {/* Income Ratio */}
-            <Card className="border border-blue-200 bg-gradient-to-br from-blue-50 to-indigo-50 hover:shadow-lg transition-all duration-200 shadow-sm">
+            <Card className="border border-border bg-card hover:shadow-lg transition-all duration-200 shadow-sm">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between mb-4">
-                  <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                    <BarChart3 className="h-5 w-5 text-blue-600" />
+                  <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900/20 rounded-full flex items-center justify-center">
+                    <BarChart3 className="h-5 w-5 text-blue-600 dark:text-blue-400" />
                   </div>
-                  <span className="text-2xl font-light text-blue-600">
+                  <span className="text-2xl font-light text-blue-600 dark:text-blue-400">
                     {totalIncome > 0 ? ((totalIncome / (totalIncome + totalExpenses)) * 100).toFixed(1) : 0}%
                   </span>
                 </div>
                 <div>
-                  <p className="text-gray-900 font-medium">Income Ratio</p>
-                  <p className="text-sm text-gray-500">Income vs total transactions</p>
+                  <p className="text-foreground font-medium">Income Ratio</p>
+                  <p className="text-sm text-muted-foreground">Income vs total transactions</p>
                 </div>
               </CardContent>
             </Card>
 
             {/* Average Income per Transaction */}
-            <Card className="border border-orange-200 bg-gradient-to-br from-orange-50 to-amber-50 hover:shadow-lg transition-all duration-200 shadow-sm">
+            <Card className="border border-border bg-card hover:shadow-lg transition-all duration-200 shadow-sm">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between mb-4">
-                  <div className="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center">
-                    <DollarSign className="h-5 w-5 text-orange-600" />
+                  <div className="w-10 h-10 bg-orange-100 dark:bg-orange-900/20 rounded-full flex items-center justify-center">
+                    <DollarSign className="h-5 w-5 text-orange-600 dark:text-orange-400" />
                   </div>
-                  <span className="text-2xl font-light text-orange-600">
+                  <span className="text-2xl font-light text-orange-600 dark:text-orange-400">
                     ₹{(totalIncome / Math.max(income.length, 1)).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                   </span>
                 </div>
                 <div>
-                  <p className="text-gray-900 font-medium">Avg. Income</p>
-                  <p className="text-sm text-gray-500">Per transaction</p>
+                  <p className="text-foreground font-medium">Avg. Income</p>
+                  <p className="text-sm text-muted-foreground">Per transaction</p>
                 </div>
               </CardContent>
             </Card>

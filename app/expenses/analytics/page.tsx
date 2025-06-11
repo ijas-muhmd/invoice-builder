@@ -7,12 +7,12 @@ import { TrendingUp, BarChart3, PieChart } from "lucide-react"
 
 export default function AnalyticsPage() {
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-6 max-w-6xl">
         {/* Header Section */}
         <div className="mb-8">
           <div className="flex items-center justify-between mb-2">
-            <h1 className="text-2xl font-semibold text-gray-900">Financial Analytics</h1>
+            <h1 className="text-2xl font-semibold text-foreground">Financial Analytics</h1>
             <button className="text-gray-500 hover:text-gray-700">
               <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <circle cx="12" cy="12" r="1"/>
@@ -21,7 +21,7 @@ export default function AnalyticsPage() {
               </svg>
             </button>
           </div>
-          <p className="text-gray-500 text-sm mb-6">
+          <p className="text-muted-foreground text-sm mb-6">
             Detailed insights into your income and expenses
           </p>
           
@@ -45,15 +45,15 @@ export default function AnalyticsPage() {
         {/* Analytics Content */}
         <div className="space-y-6">
           {/* Main Statistics Card */}
-          <Card className="border border-gray-200 bg-white shadow-sm hover:shadow-lg transition-all duration-200">
+          <Card className="border border-border bg-card shadow-sm hover:shadow-lg transition-all duration-200">
             <CardHeader className="pb-4">
               <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                  <TrendingUp className="h-5 w-5 text-blue-600" />
+                <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900/20 rounded-full flex items-center justify-center">
+                  <TrendingUp className="h-5 w-5 text-blue-600 dark:text-blue-400" />
                 </div>
                 <div>
-                  <CardTitle className="text-lg font-medium text-gray-900">Financial Statistics</CardTitle>
-                  <CardDescription className="text-gray-500">Comprehensive breakdown of your financial data</CardDescription>
+                  <CardTitle className="text-lg font-medium text-foreground">Financial Statistics</CardTitle>
+                  <CardDescription className="text-muted-foreground">Comprehensive breakdown of your financial data</CardDescription>
                 </div>
               </div>
             </CardHeader>
@@ -65,15 +65,15 @@ export default function AnalyticsPage() {
           {/* Charts Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Spending Trends Chart */}
-            <Card className="border border-gray-200 bg-white shadow-sm hover:shadow-lg transition-all duration-200">
+            <Card className="border border-border bg-card shadow-sm hover:shadow-lg transition-all duration-200">
               <CardHeader className="pb-4">
                 <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
-                    <TrendingUp className="h-5 w-5 text-green-600" />
+                  <div className="w-10 h-10 bg-green-100 dark:bg-green-900/20 rounded-full flex items-center justify-center">
+                    <TrendingUp className="h-5 w-5 text-green-600 dark:text-green-400" />
                   </div>
                   <div>
-                    <CardTitle className="text-lg font-medium text-gray-900">Spending Trends</CardTitle>
-                    <CardDescription className="text-gray-500">Monthly expense trends over time</CardDescription>
+                    <CardTitle className="text-lg font-medium text-foreground">Spending Trends</CardTitle>
+                    <CardDescription className="text-muted-foreground">Monthly expense trends over time</CardDescription>
                   </div>
                 </div>
               </CardHeader>
@@ -83,15 +83,15 @@ export default function AnalyticsPage() {
             </Card>
 
             {/* Category Breakdown Chart */}
-            <Card className="border border-gray-200 bg-white shadow-sm hover:shadow-lg transition-all duration-200">
+            <Card className="border border-border bg-card shadow-sm hover:shadow-lg transition-all duration-200">
               <CardHeader className="pb-4">
                 <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
-                    <PieChart className="h-5 w-5 text-purple-600" />
+                  <div className="w-10 h-10 bg-purple-100 dark:bg-purple-900/20 rounded-full flex items-center justify-center">
+                    <PieChart className="h-5 w-5 text-purple-600 dark:text-purple-400" />
                   </div>
                   <div>
-                    <CardTitle className="text-lg font-medium text-gray-900">Category Breakdown</CardTitle>
-                    <CardDescription className="text-gray-500">Expenses distributed by category</CardDescription>
+                    <CardTitle className="text-lg font-medium text-foreground">Category Breakdown</CardTitle>
+                    <CardDescription className="text-muted-foreground">Expenses distributed by category</CardDescription>
                   </div>
                 </div>
               </CardHeader>

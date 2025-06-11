@@ -200,33 +200,13 @@ class Database implements IDatabase {
   async set(store: StoreName, key: string, value: any) {
     try {
       const db = await this.init();
-      
-      console.log(`DB Set Call: store=${store}, key=${key}, value=`, value, `value.id=${value?.id}`);
-
-      // List of stores that use keyPath (require id)
-      const keyPathStores = [
-        'invoices',
-        'drafts',
-        'businesses',
-        'workspaces',
-        'bank_accounts',
-        'templates',
-        'financial_transactions',
-        'financial_expense_categories',
-        'financial_income_categories',
-        'payment_methods'
-      ];
-
-      // For stores that use keyPath, ensure value has id
-      if (keyPathStores.includes(store)) {
-        if (!value.id) {
-          console.error(`Value missing required 'id' property for store ${store}:`, value);
-          throw new Error(`Value missing required 'id' property for store ${store}`);
-        }
-        // For keyPath stores, just pass the value
+      // Check the object store's keyPath at runtime
+      const tx = db.transaction(store, 'readwrite');
+      const objectStore = tx.objectStore(store);
+      const hasKeyPath = !!objectStore.keyPath;
+      if (hasKeyPath) {
         return db.put(store, value);
       } else {
-        // For non-keyPath stores (like settings), use the key parameter
         return db.put(store, value, key);
       }
     } catch (error) {

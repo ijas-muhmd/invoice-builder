@@ -1,8 +1,6 @@
 'use client';
 
-import { useState } from 'react';
-import { Task, TaskFormData } from '@/types/task';
-import { TaskForm } from '@/components/task-form';
+import { useTasks } from '@/contexts/task-context';
 import { TaskList } from '@/components/task-list';
 import { Button } from '@/components/ui/button';
 import {
@@ -13,16 +11,28 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { Plus } from 'lucide-react';
+import { useState } from 'react';
+import { TaskForm } from '@/components/task-form';
+import { TaskFormData, Task } from '@/types/task';
 import { v4 as uuidv4 } from 'uuid';
-import { useTasks } from '@/contexts/task-context';
+import { EmptyState } from '@/components/empty-state';
+import { Calendar } from 'lucide-react';
 
-export default function PendingTasksPage() {
+export default function TodayTasksPage() {
   const { tasks, addTask, updateTask, deleteTask } = useTasks();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
 
-  // Filter tasks to show only pending ones
-  const pendingTasks = tasks.filter(task => task.status === 'pending');
+  // Filter tasks for today
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const tomorrow = new Date(today);
+  tomorrow.setDate(tomorrow.getDate() + 1);
+
+  const todayTasks = tasks.filter(task => {
+    const taskDate = new Date(task.dueDate);
+    return taskDate >= today && taskDate < tomorrow;
+  });
 
   const handleCreateTask = (data: TaskFormData) => {
     const newTask: Task = {
@@ -66,7 +76,7 @@ export default function PendingTasksPage() {
   return (
     <div className="container mx-auto py-8">
       <div className="flex items-center justify-between mb-8">
-        <h1 className="text-3xl font-bold">Pending Tasks</h1>
+        <h1 className="text-3xl font-bold">Today's Tasks</h1>
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
             <Button>
@@ -88,12 +98,24 @@ export default function PendingTasksPage() {
         </Dialog>
       </div>
 
-      <TaskList
-        tasks={pendingTasks}
-        onStatusChange={handleStatusChange}
-        onEdit={handleEdit}
-        onDelete={handleDeleteTask}
-      />
+      {todayTasks.length === 0 ? (
+        <EmptyState
+          title="No Tasks for Today"
+          description="You have no tasks scheduled for today. Add a task to get started."
+          icon={<Calendar className="h-8 w-8 text-muted-foreground" />}
+          action={{
+            label: 'Add Task',
+            onClick: () => setIsDialogOpen(true)
+          }}
+        />
+      ) : (
+        <TaskList
+          tasks={todayTasks}
+          onStatusChange={handleStatusChange}
+          onEdit={handleEdit}
+          onDelete={handleDeleteTask}
+        />
+      )}
     </div>
   );
 } 

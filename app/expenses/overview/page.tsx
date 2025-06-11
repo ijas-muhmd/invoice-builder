@@ -32,7 +32,6 @@ import { eachMonthOfInterval, format, subMonths, endOfMonth, startOfMonth } from
 
 export default function FinancialOverviewPage() {
   const { 
-    expenses, 
     totalExpenses, 
     monthlyExpenses, 
     getExpenseCategories,
@@ -52,6 +51,7 @@ export default function FinancialOverviewPage() {
   const [converting, setConverting] = useState(false)
 
   // Get data
+  const expenses = getTransactionsByType('expense')
   const income = getTransactionsByType('income')
   const expenseCategories = getExpenseCategories()
   const incomeCategories = getIncomeCategories()
@@ -118,27 +118,27 @@ export default function FinancialOverviewPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
+    <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-6 max-w-6xl">
         {/* Header Section */}
         <div className="mb-12">
           <div className="flex items-center justify-between mb-2">
-            <h1 className="text-2xl font-semibold text-gray-900">Financial Overview</h1>
-            <Button variant="ghost" size="sm" className="text-gray-500">
+            <h1 className="text-2xl font-semibold text-foreground">Financial Overview</h1>
+            <Button variant="ghost" size="sm" className="text-muted-foreground">
               <MoreHorizontal className="h-5 w-5" />
             </Button>
           </div>
           {/* Main Balance Display */}
           <div className="mb-8">
             <div className="flex items-baseline space-x-2 mb-2">
-              <span className="text-5xl font-light text-gray-900">
+              <span className="text-5xl font-light text-foreground">
                 ₹{Math.abs(netIncome).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
               </span>
               <Button variant="ghost" size="sm" className="p-1">
-                <ChevronRight className="h-4 w-4 text-gray-400" />
+                <ChevronRight className="h-4 w-4 text-muted-foreground" />
               </Button>
             </div>
-            <div className="flex items-center space-x-4 text-sm text-gray-500 mb-6">
+            <div className="flex items-center space-x-4 text-sm text-muted-foreground mb-6">
               <span>Net balance</span>
               <Badge variant={netIncome >= 0 ? "secondary" : "destructive"} className="text-xs">
                 {netIncome >= 0 ? "Profit" : "Loss"}
@@ -210,44 +210,44 @@ export default function FinancialOverviewPage() {
 
         {/* Financial Summary Cards */}
         <div className="mb-10">
-          <h2 className="text-lg font-medium text-gray-900 mb-6">Financial Summary</h2>
+          <h2 className="text-lg font-medium text-foreground mb-6">Financial Summary</h2>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
             {/* Total Income */}
-            <Card className="border border-gray-200 bg-white shadow-sm transition-all duration-200 hover:shadow-md">
+            <Card className="border border-border bg-card shadow-sm transition-all duration-200 hover:shadow-md">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between mb-4">
-                  <div className="w-10 h-10 bg-green-50 rounded-full flex items-center justify-center">
+                  <div className="w-10 h-10 bg-green-50 dark:bg-green-900/20 rounded-full flex items-center justify-center">
                     <TrendingUp className="h-5 w-5 text-green-600" />
                   </div>
                   <span className="text-2xl font-light text-green-600">
                     ₹{totalIncome.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                   </span>
                 </div>
-                <CardDescription>Total income earned</CardDescription>
+                <CardDescription className="text-muted-foreground">Total income earned</CardDescription>
               </CardContent>
             </Card>
 
             {/* Total Expenses */}
-            <Card className="border border-gray-200 bg-white shadow-sm transition-all duration-200 hover:shadow-md">
+            <Card className="border border-border bg-card shadow-sm transition-all duration-200 hover:shadow-md">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between mb-4">
-                  <div className="w-10 h-10 bg-red-50 rounded-full flex items-center justify-center">
+                  <div className="w-10 h-10 bg-red-50 dark:bg-red-900/20 rounded-full flex items-center justify-center">
                     <TrendingDown className="h-5 w-5 text-red-600" />
                   </div>
                   <span className="text-2xl font-light text-red-600">
                     ₹{totalExpenses.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                   </span>
                 </div>
-                <CardDescription>Total expenses incurred</CardDescription>
+                <CardDescription className="text-muted-foreground">Total expenses incurred</CardDescription>
               </CardContent>
             </Card>
 
             {/* Monthly Net */}
-            <Card className="border border-gray-200 bg-white shadow-sm transition-all duration-200 hover:shadow-md">
+            <Card className="border border-border bg-card shadow-sm transition-all duration-200 hover:shadow-md">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between mb-4">
-                  <div className="w-10 h-10 bg-blue-50 rounded-full flex items-center justify-center">
+                  <div className="w-10 h-10 bg-blue-50 dark:bg-blue-900/20 rounded-full flex items-center justify-center">
                     <Calendar className="h-5 w-5 text-blue-600" />
                   </div>
                   <span className={`text-2xl font-light ${monthlyNetIncome >= 0 ? 'text-blue-600' : 'text-red-600'}`}>
@@ -255,8 +255,8 @@ export default function FinancialOverviewPage() {
                   </span>
                 </div>
                 <div>
-                  <p className="text-gray-900 font-medium">This Month</p>
-                  <p className="text-sm text-gray-500">{currentMonth}</p>
+                  <p className="text-foreground font-medium">This Month</p>
+                  <p className="text-sm text-muted-foreground">{currentMonth}</p>
                 </div>
               </CardContent>
             </Card>
@@ -266,12 +266,20 @@ export default function FinancialOverviewPage() {
         {/* New section for charts and recent activity */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
           {/* Top Categories Pie Chart */}
-          <ExpenseChart type="category" />
+          <Card className="border border-border bg-card shadow-sm transition-all duration-200 hover:shadow-md">
+            <CardHeader className="bg-card">
+              <CardTitle className="text-lg font-medium text-foreground">Top Categories</CardTitle>
+              <CardDescription className="text-muted-foreground">Breakdown of expenses by category</CardDescription>
+            </CardHeader>
+            <CardContent className="bg-card">
+              <ExpenseChart type="category" />
+            </CardContent>
+          </Card>
 
           {/* Recent Expenses/Income (Default chart type) */}
-          <Card className="border border-gray-200 bg-white shadow-sm transition-all duration-200 hover:shadow-md p-6">
+          <Card className="border border-border bg-card shadow-sm transition-all duration-200 hover:shadow-md p-6">
             <CardHeader className="p-0 pb-4">
-              <CardTitle className="text-lg font-medium text-gray-900">Recent Activity</CardTitle>
+              <CardTitle className="text-lg font-medium text-foreground">Recent Activity</CardTitle>
               <CardDescription>Latest income and expense transactions</CardDescription>
             </CardHeader>
             <CardContent className="p-0">
@@ -280,29 +288,31 @@ export default function FinancialOverviewPage() {
           </Card>
         </div>
 
-        {/* Available Categories (Simplified) */}
-        
-
         {/* Monthly Trend Chart */}
-        <div className="mb-10">
-          <h2 className="text-lg font-medium text-gray-900 mb-6">Monthly Trend</h2>
-          <ExpenseChart type="trend" />
-        </div>
+        <Card className="border border-border bg-card shadow-sm transition-all duration-200 hover:shadow-md mb-10">
+          <CardHeader>
+            <CardTitle className="text-lg font-medium text-foreground">Monthly Expense Trend</CardTitle>
+            <CardDescription className="text-muted-foreground">Expenses over the last 6 months</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <ExpenseChart type="trend" />
+          </CardContent>
+        </Card>
 
         {/* Latest Transactions (Income/Expense Lists) - Optional, could be integrated into Recent Activity or moved to separate pages */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
-          <Card className="border border-gray-200 bg-white shadow-sm transition-all duration-200 hover:shadow-md p-6">
+          <Card className="border border-border bg-card shadow-sm transition-all duration-200 hover:shadow-md p-6">
             <CardHeader className="p-0 pb-4">
-              <CardTitle className="text-lg font-medium text-gray-900">Recent Expenses</CardTitle>
+              <CardTitle className="text-lg font-medium text-foreground">Recent Expenses</CardTitle>
             </CardHeader>
             <CardContent className="p-0">
-              {expenses.filter(exp => exp.inrAmount > 0).length > 0 ? (
+              {expenses.filter((exp: Transaction) => exp.inrAmount > 0).length > 0 ? (
                 <ExpenseList 
-                  expenses={expenses.filter(exp => exp.inrAmount > 0).slice(0, 3)}
+                  expenses={expenses.filter((exp: Transaction) => exp.inrAmount > 0).slice(0, 3)}
                   onEdit={handleEditExpense}
                 />
               ) : (
-                <p className="text-center py-8 text-gray-500">No recent expenses.</p>
+                <p className="text-center py-8 text-muted-foreground">No recent expenses.</p>
               )}
               <Link href="/expenses/list" className="text-blue-600 hover:text-blue-700 text-sm mt-4 block text-center">
                 View All Expenses
@@ -310,18 +320,18 @@ export default function FinancialOverviewPage() {
             </CardContent>
           </Card>
 
-          <Card className="border border-gray-200 bg-white shadow-sm transition-all duration-200 hover:shadow-md p-6">
+          <Card className="border border-border bg-card shadow-sm transition-all duration-200 hover:shadow-md p-6">
             <CardHeader className="p-0 pb-4">
-              <CardTitle className="text-lg font-medium text-gray-900">Recent Income</CardTitle>
+              <CardTitle className="text-lg font-medium text-foreground">Recent Income</CardTitle>
             </CardHeader>
             <CardContent className="p-0">
-              {income.filter(inc => inc.inrAmount > 0).length > 0 ? (
+              {income.filter((inc: Transaction) => inc.inrAmount > 0).length > 0 ? (
                 <IncomeList 
-                  income={income.filter(inc => inc.inrAmount > 0).slice(0, 3)}
+                  income={income.filter((inc: Transaction) => inc.inrAmount > 0).slice(0, 3)}
                   onEdit={handleEditIncome}
                 />
               ) : (
-                <p className="text-center py-8 text-gray-500">No recent income.</p>
+                <p className="text-center py-8 text-muted-foreground">No recent income.</p>
               )}
               <Link href="/expenses/income" className="text-blue-600 hover:text-blue-700 text-sm mt-4 block text-center">
                 View All Income

@@ -3,7 +3,7 @@
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
-import { Sun, Moon, LayoutDashboard, Users, Trash2, FileText, Receipt, TrendingUp, PlusCircle, Calendar, Filter, BarChart3, CheckSquare, ListTodo, Clock, CheckCircle2 } from "lucide-react";
+import { Sun, Moon, LayoutDashboard, Users, Trash2, FileText, Receipt, TrendingUp, PlusCircle, Calendar, Filter, BarChart3, CheckSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "next-themes";
 import Link from 'next/link';
@@ -20,7 +20,7 @@ import { InvoiceStats } from "@/components/invoice-stats"
 import { SpotlightSearch } from "@/components/spotlight-search"
 import { useWorkspace } from "@/contexts/workspace-context";
 import { FinancialTrendChart } from "@/components/financial-trend-chart";
-import { useTasks } from "@/contexts/task-context";
+import TaskSidebar from "@/components/task-sidebar";
 
 export default function Sidebar() {
   const [mounted, setMounted] = useState(false);
@@ -33,15 +33,11 @@ export default function Sidebar() {
   const currentInvoiceId = pathname.startsWith('/invoice/') ? pathname.split('/')[2] : null;
   const { currentWorkspace } = useWorkspace();
   const [newDraftId, setNewDraftId] = useState<string | null>(null);
-  const { tasks } = useTasks();
-
-  // Calculate pending tasks count
-  const pendingTasksCount = tasks.filter(task => task.status === 'pending').length;
 
   // Determine current product based on route
   const isFinancialTracker = pathname.startsWith('/expenses');
+  const isInvoiceBuilder = !isFinancialTracker && !pathname.startsWith('/tasks');
   const isTaskManager = pathname.startsWith('/tasks');
-  const isInvoiceBuilder = !isFinancialTracker && !isTaskManager;
 
   useEffect(() => {
     setMounted(true);
@@ -68,15 +64,6 @@ export default function Sidebar() {
       .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
       .slice(0, 5)
   }, [expenses])
-
-  // const recentInvoicesList = useMemo(() => {
-  //   return currentWorkspace
-  //     ? invoices
-  //         .filter(inv => inv.workspaceId === currentWorkspace.id)
-          
-          
-  //     : []
-  // }, [invoices, currentWorkspace])
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -129,6 +116,10 @@ export default function Sidebar() {
   };
 
   return (
+    <>
+      {isTaskManager ? (
+        <TaskSidebar />
+      ) : (
     <div className="fixed top-14 bottom-0 z-40 flex w-72 flex-col">
       <div className="flex grow flex-col gap-y-5 overflow-y-auto border-r bg-background px-6 pt-6">
         <nav className="flex flex-1 flex-col">
@@ -165,6 +156,20 @@ export default function Sidebar() {
                     </Button>
                   </Link>
                 </li>
+                    <li>
+                      <Link href="/tasks">
+                        <Button 
+                          variant="ghost" 
+                          className={cn(
+                            "w-full justify-start",
+                            pathname === "/tasks" && "bg-accent text-accent-foreground"
+                          )}
+                        >
+                          <CheckSquare className="mr-2 h-4 w-4" />
+                          Task Manager
+                        </Button>
+                      </Link>
+                    </li>
               </>
             )}
 
@@ -207,60 +212,36 @@ export default function Sidebar() {
                         pathname === "/expenses/list" && "bg-accent text-accent-foreground"
                       )}
                     >
-                      <Receipt className="mr-2 h-4 w-4" />
+                      <Receipt className="mr-2 h-4 w-4 text-red-600" />
                       Expenses
                     </Button>
                   </Link>
                 </li>
-              </>
-            )}
-
-            {isTaskManager && (
-              <>
                 <li>
-                  <Link href="/tasks">
+                  <Link href="/expenses/analytics">
                     <Button 
                       variant="ghost" 
                       className={cn(
                         "w-full justify-start",
-                        pathname === "/tasks" && "bg-accent text-accent-foreground"
+                        pathname === "/expenses/analytics" && "bg-accent text-accent-foreground"
                       )}
                     >
-                      <ListTodo className="mr-2 h-4 w-4" />
-                      All Tasks
+                      <TrendingUp className="mr-2 h-4 w-4" />
+                      Analytics
                     </Button>
                   </Link>
                 </li>
                 <li>
-                  <Link href="/tasks/pending">
+                  <Link href="/expenses/cash-flow">
                     <Button 
                       variant="ghost" 
                       className={cn(
                         "w-full justify-start",
-                        pathname === "/tasks/pending" && "bg-accent text-accent-foreground"
+                        pathname === "/expenses/cash-flow" && "bg-accent text-accent-foreground"
                       )}
                     >
-                      <Clock className="mr-2 h-4 w-4" />
-                      Pending
-                      {pendingTasksCount > 0 && (
-                        <Badge variant="destructive" className="ml-2">
-                          {pendingTasksCount}
-                        </Badge>
-                      )}
-                    </Button>
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/tasks/completed">
-                    <Button 
-                      variant="ghost" 
-                      className={cn(
-                        "w-full justify-start",
-                        pathname === "/tasks/completed" && "bg-accent text-accent-foreground"
-                      )}
-                    >
-                      <CheckCircle2 className="mr-2 h-4 w-4" />
-                      Completed
+                      <BarChart3 className="mr-2 h-4 w-4" />
+                      Cash Flow
                     </Button>
                   </Link>
                 </li>
@@ -438,5 +419,7 @@ export default function Sidebar() {
         </nav>
       </div>
     </div>
+      )}
+    </>
   );
 } 

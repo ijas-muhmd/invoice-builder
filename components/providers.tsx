@@ -168,24 +168,24 @@ export function Providers({ children }: { children: React.ReactNode }) {
                 <InvoiceProviderWithSync>
                   <CustomerProvider>
                     <TaskProvider>
-                      <div className="min-h-screen flex flex-col">
-                        <GlobalHeader />
-                        <div className="flex flex-1 pt-14">
-                          <Sidebar />
-                          <main className="flex-1 ml-72">
-                            {children}
-                          </main>
-                        </div>
+                    <div className="min-h-screen flex flex-col">
+                      <GlobalHeader />
+                      <div className="flex flex-1 pt-14">
+                        <Sidebar />
+                        <main className="flex-1 ml-72">
+                          {children}
+                        </main>
                       </div>
-                      <FloatingAddButton />
-                      <AutosaveIndicator saving={false} />
-                      <AdBanner tourCompleted={tourCompleted} />
-                      <PinEntryDialog open={false} onOpenChange={function (open: boolean): void {
-                        throw new Error("Function not implemented.")
-                      } } onSubmit={function (pin: string): void {
-                        throw new Error("Function not implemented.")
-                      } }  />
-                      <Toaster />
+                    </div>
+                    <FloatingAddButton />
+                    <AutosaveIndicator saving={false} />
+                    <AdBanner tourCompleted={tourCompleted} />
+                    <PinEntryDialog open={false} onOpenChange={function (open: boolean): void {
+                      throw new Error("Function not implemented.")
+                    } } onSubmit={function (pin: string): void {
+                      throw new Error("Function not implemented.")
+                    } }  />
+                    <Toaster />
                     </TaskProvider>
                   </CustomerProvider>
                 </InvoiceProviderWithSync>

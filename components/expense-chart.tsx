@@ -1,6 +1,6 @@
 "use client"
 
-import { useFinancial } from "@/contexts/financial-context"
+import { useFinancial, type Transaction } from "@/contexts/financial-context"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Pie, PieChart, Cell, Tooltip, ResponsiveContainer, Legend, LineChart, Line, AreaChart, Area, XAxis, YAxis, CartesianGrid } from "recharts"
 import { format } from "date-fns"
@@ -10,7 +10,8 @@ interface ExpenseChartProps {
 }
 
 export function ExpenseChart({ type = 'default' }: ExpenseChartProps) {
-  const { expenses, getExpenseCategories, totalExpenses } = useFinancial()
+  const { getTransactionsByType, getExpenseCategories, totalExpenses } = useFinancial()
+  const expenses: Transaction[] = getTransactionsByType('expense')
 
   // Access categories directly from useFinancial
   const categories = getExpenseCategories()
@@ -20,8 +21,8 @@ export function ExpenseChart({ type = 'default' }: ExpenseChartProps) {
   if (type === 'category') {
     // Category pie chart data
     const categoryData = categories.map(category => {
-      const categoryExpenses = expenses.filter(expense => expense.category === category.id)
-      const categoryTotal = categoryExpenses.reduce((sum, expense) => sum + expense.inrAmount, 0)
+      const categoryExpenses = expenses.filter((expense: Transaction) => expense.category === category.id)
+      const categoryTotal = categoryExpenses.reduce((sum: number, expense: Transaction) => sum + expense.inrAmount, 0)
       const percentage = totalExpenses > 0 ? (categoryTotal / totalExpenses) * 100 : 0
       
       return {
@@ -32,12 +33,12 @@ export function ExpenseChart({ type = 'default' }: ExpenseChartProps) {
     }).filter(item => item.value > 0).sort((a, b) => b.value - a.value)
 
     return (
-      <Card className="border border-gray-200 bg-white shadow-sm transition-all duration-200 hover:shadow-md p-6">
-        <CardHeader className="p-0 pb-4">
-          <CardTitle className="text-lg font-medium text-gray-900">Top Categories</CardTitle>
-          <CardDescription>Breakdown of expenses by category</CardDescription>
+      <Card className="border border-border bg-card shadow-sm transition-all duration-200 hover:shadow-md p-6">
+        <CardHeader className="p-0 pb-4 bg-card">
+          <CardTitle className="text-lg font-medium text-foreground">Top Categories</CardTitle>
+          <CardDescription className="text-muted-foreground">Breakdown of expenses by category</CardDescription>
         </CardHeader>
-        <CardContent className="p-0 h-80 w-full">
+        <CardContent className="p-0 h-80 w-full bg-card">
           {categoryData.length > 0 ? (
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
@@ -74,12 +75,12 @@ export function ExpenseChart({ type = 'default' }: ExpenseChartProps) {
     const now = new Date()
     const monthlyTrendData = Array.from({ length: 6 }, (_, i) => {
       const date = new Date(now.getFullYear(), now.getMonth() - i, 1)
-      const monthExpenses = expenses.filter(expense => {
+      const monthExpenses = expenses.filter((expense: Transaction) => {
         const expenseDate = new Date(expense.date)
         return expenseDate.getUTCMonth() === date.getUTCMonth() && 
                expenseDate.getUTCFullYear() === date.getUTCFullYear()
       })
-      const monthTotal = monthExpenses.reduce((sum, expense) => sum + expense.inrAmount, 0)
+      const monthTotal = monthExpenses.reduce((sum: number, expense: Transaction) => sum + expense.inrAmount, 0)
       const monthName = format(date, 'MMM')
       
       return {
@@ -90,12 +91,12 @@ export function ExpenseChart({ type = 'default' }: ExpenseChartProps) {
     }).reverse()
 
     return (
-      <Card className="border border-gray-200 bg-white shadow-sm transition-all duration-200 hover:shadow-md p-6">
-        <CardHeader className="p-0 pb-4">
-          <CardTitle className="text-lg font-medium text-gray-900">Monthly Expense Trend</CardTitle>
-          <CardDescription>Expenses over the last 6 months</CardDescription>
+      <Card className="border border-border bg-card shadow-sm transition-all duration-200 hover:shadow-md p-6">
+        <CardHeader className="p-0 pb-4 bg-card">
+          <CardTitle className="text-lg font-medium text-foreground">Monthly Expense Trend</CardTitle>
+          <CardDescription className="text-muted-foreground">Expenses over the last 6 months</CardDescription>
         </CardHeader>
-        <CardContent className="p-0 h-80 w-full">
+        <CardContent className="p-0 h-80 w-full bg-card">
           {monthlyTrendData.length > 0 ? (
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart
@@ -127,13 +128,13 @@ export function ExpenseChart({ type = 'default' }: ExpenseChartProps) {
   // Default chart - recent expenses overview
   const recentExpenses = expenses
     .slice(0, 5)
-    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+    .sort((a: Transaction, b: Transaction) => new Date(b.date).getTime() - new Date(a.date).getTime())
 
   return (
     <div className="space-y-4">
       {recentExpenses.length > 0 ? (
         <div className="space-y-3">
-          {recentExpenses.map((expense) => {
+          {recentExpenses.map((expense: Transaction) => {
             const category = categories.find(cat => cat.id === expense.category)
             
             return (

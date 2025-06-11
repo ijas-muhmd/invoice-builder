@@ -60,6 +60,8 @@ export const invoiceSchema = z.object({
     price: "PRICE",
     amount: "AMOUNT"
   }),
+  typedSignature: z.string().optional(),
+  uploadedSignature: z.string().optional(),
 })
 
 export type InvoiceFormValues = z.infer<typeof invoiceSchema> 

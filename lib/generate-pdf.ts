@@ -3,6 +3,11 @@ import html2canvas from 'html2canvas';
 import type { InvoiceFormValues } from '@/app/invoice-schema';
 
 export const generatePDF = async (previewRef: HTMLDivElement) => {
+  // Save original class
+  const originalClass = previewRef.className;
+  // Force light mode
+  previewRef.classList.add('light');
+  previewRef.classList.remove('dark');
   try {
     const canvas = await html2canvas(previewRef, {
       scale: 2, // Higher scale for better quality
@@ -10,6 +15,8 @@ export const generatePDF = async (previewRef: HTMLDivElement) => {
       logging: false,
       backgroundColor: '#ffffff'
     });
+    // Restore original class
+    previewRef.className = originalClass;
 
     const imgWidth = 210; // A4 width in mm
     const pageHeight = 297; // A4 height in mm
@@ -43,6 +50,8 @@ export const generatePDF = async (previewRef: HTMLDivElement) => {
 
     return pdf;
   } catch (error) {
+    // Restore original class on error
+    previewRef.className = originalClass;
     console.error('Error generating PDF:', error);
     throw error;
   }

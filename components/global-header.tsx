@@ -190,81 +190,81 @@ export function GlobalHeader({ className }: GlobalHeaderProps) {
                   <p>Switch between Invoice Builder and Financial Tracker</p>
                 </TooltipContent>
               </Tooltip>
-              <DropdownMenuContent align="start" className="w-80">
-                <div className="p-2">
-                  <div className="flex items-center justify-between mb-3">
-                    <p className="text-sm font-medium">Switch Products</p>
-                    <Badge variant="outline" className="text-xs">
-                      {products.filter(p => p.status === 'active').length} Active
-                    </Badge>
-                  </div>
-                  <div className="grid gap-1">
-                    {products.map((product) => {
-                      const isActive = currentProduct?.id === product.id
-                      const isDisabled = product.status === 'coming-soon'
+            <DropdownMenuContent align="start" className="w-80">
+              <div className="p-2">
+                <div className="flex items-center justify-between mb-3">
+                  <p className="text-sm font-medium">Switch Products</p>
+                  <Badge variant="outline" className="text-xs">
+                    {products.filter(p => p.status === 'active').length} Active
+                  </Badge>
+                </div>
+                <div className="grid gap-1">
+                  {products.map((product) => {
+                    const isActive = currentProduct?.id === product.id
+                    const isDisabled = product.status === 'coming-soon'
                       const isTaskManager = product.id === 'task-manager'
                       const taskCount = isTaskManager ? pendingTasksCount : 0
-                      
-                      const ProductItem = ({ children }: { children: React.ReactNode }) => (
-                        <div
-                          className={cn(
-                            "flex items-start space-x-3 rounded-md p-3 transition-colors",
-                            isActive && "bg-accent",
-                            !isDisabled && "hover:bg-accent cursor-pointer",
-                            isDisabled && "opacity-60 cursor-not-allowed"
-                          )}
-                        >
-                          {children}
-                        </div>
-                      )
+                    
+                    const ProductItem = ({ children }: { children: React.ReactNode }) => (
+                      <div
+                        className={cn(
+                          "flex items-start space-x-3 rounded-md p-3 transition-colors",
+                          isActive && "bg-accent",
+                          !isDisabled && "hover:bg-accent cursor-pointer",
+                          isDisabled && "opacity-60 cursor-not-allowed"
+                        )}
+                      >
+                        {children}
+                      </div>
+                    )
 
-                      const content = (
-                        <ProductItem>
-                          <product.icon className={cn("h-5 w-5 mt-0.5", getStatusColor(product.status))} />
-                          <div className="flex-1 space-y-1">
-                            <div className="flex items-center justify-between">
+                    const content = (
+                      <ProductItem>
+                        <product.icon className={cn("h-5 w-5 mt-0.5", getStatusColor(product.status))} />
+                        <div className="flex-1 space-y-1">
+                          <div className="flex items-center justify-between">
                               <p className={cn("text-sm font-medium", getStatusColor(product.status))}>
                                 {product.name}
                               </p>
                               {isTaskManager && taskCount > 0 && (
                                 <Badge variant="destructive" className="ml-2">
                                   {taskCount}
-                                </Badge>
-                              )}
-                            </div>
-                            <p className="text-xs text-muted-foreground">
-                              {product.description}
-                            </p>
+                              </Badge>
+                            )}
                           </div>
-                        </ProductItem>
-                      )
+                          <p className="text-xs text-muted-foreground">
+                            {product.description}
+                            </p>
+                        </div>
+                      </ProductItem>
+                    )
 
-                      if (isDisabled) {
+                    if (isDisabled) {
                         return content
-                      }
+                    }
 
-                      return (
+                    return (
                         <Link
                           key={product.id}
-                          href={product.href}
-                          onClick={() => setIsOpen(false)}
-                        >
-                          {content}
-                        </Link>
-                      )
-                    })}
-                  </div>
+                            href={product.href}
+                            onClick={() => setIsOpen(false)}
+                          >
+                            {content}
+                          </Link>
+                    )
+                  })}
                 </div>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </TooltipProvider>
+              </div>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </TooltipProvider>
         </div>
 
-        {/* Current Product Description */}
+          {/* Current Product Description */}
         <div className="flex-1">
-          <p className="text-sm text-muted-foreground">
+              <p className="text-sm text-muted-foreground">
             {currentProduct?.description}
-          </p>
+              </p>
         </div>
 
         {/* Workspace Switcher - Last */}

@@ -37,6 +37,7 @@ import { CustomizeFieldsModal } from "@/components/customize-fields-modal";
 import { BankAccountSelectField } from "@/components/bank-account-select-field";
 import { Preview } from "@/components/preview"
 import { VersionFooter } from "@/components/version-footer";
+import { InvoiceNotes } from '@/components/invoice-form/invoice-notes';
 
 export default function EditInvoicePage({ params }: { params: { id: string } }) {
   const { invoices, updateInvoice } = useInvoices();
@@ -569,23 +570,7 @@ export default function EditInvoicePage({ params }: { params: { id: string } }) 
               onRemoveItem={remove}
             />
 
-            <FormField
-              control={form.control}
-              name="notes"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Notes</FormLabel>
-                  <FormControl>
-                    <Textarea
-                      placeholder="Additional notes or terms..."
-                      className="resize-none"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <InvoiceNotes form={form} />
 
             {activeFields.includes('bankDetails') && (
               <FormField

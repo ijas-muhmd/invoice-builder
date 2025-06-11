@@ -163,12 +163,12 @@ export default function CashFlowPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-6 max-w-6xl">
         {/* Header Section */}
         <div className="mb-8">
           <div className="flex items-center justify-between mb-2">
-            <h1 className="text-2xl font-semibold text-gray-900">Cash Flow Analysis</h1>
+            <h1 className="text-2xl font-semibold text-foreground">Cash Flow</h1>
             <div className="flex space-x-3">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -290,84 +290,84 @@ export default function CashFlowPage() {
 
         {/* Financial Summary */}
         <div className="mb-8">
-          <h2 className="text-lg font-medium text-gray-900 mb-6">Financial Summary</h2>
+          <h2 className="text-lg font-medium text-foreground mb-6">Financial Summary</h2>
           
           {/* Key Metrics */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
             {/* Net Cash Flow */}
-            <Card className={`border ${netIncome >= 0 ? 'border-green-200 bg-gradient-to-br from-green-50 to-emerald-50' : 'border-red-200 bg-gradient-to-br from-red-50 to-pink-50'} hover:shadow-lg transition-all duration-200 shadow-sm`}>
+            <Card className={`border border-border bg-card hover:shadow-lg transition-all duration-200 shadow-sm`}>
               <CardContent className="p-6">
                 <div className="flex items-center justify-between mb-4">
-                  <div className={`w-10 h-10 ${netIncome >= 0 ? 'bg-green-100' : 'bg-red-100'} rounded-full flex items-center justify-center`}>
+                  <div className={`w-10 h-10 ${netIncome >= 0 ? 'bg-green-100 dark:bg-green-900/20' : 'bg-red-100 dark:bg-red-900/20'} rounded-full flex items-center justify-center`}>
                     {netIncome >= 0 ? 
-                      <TrendingUp className="h-5 w-5 text-green-600" /> : 
-                      <TrendingDown className="h-5 w-5 text-red-600" />
+                      <TrendingUp className="h-5 w-5 text-green-600 dark:text-green-400" /> : 
+                      <TrendingDown className="h-5 w-5 text-red-600 dark:text-red-400" />
                     }
                   </div>
-                  <span className={`text-2xl font-light ${netIncome >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                  <span className={`text-2xl font-light ${netIncome >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
                     {netIncome >= 0 ? '+' : '-'}₹{Math.abs(netIncome).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                   </span>
                 </div>
                 <div>
-                  <p className="text-gray-900 font-medium">Net Cash Flow</p>
-                  <p className="text-sm text-gray-500">Overall financial position</p>
+                  <p className="text-foreground font-medium">Net Cash Flow</p>
+                  <p className="text-sm text-muted-foreground">Overall financial position</p>
                 </div>
               </CardContent>
             </Card>
 
             {/* Monthly Net */}
-            <Card className={`border ${monthlyNetIncome >= 0 ? 'border-green-200 bg-gradient-to-br from-green-50 to-emerald-50' : 'border-red-200 bg-gradient-to-br from-red-50 to-pink-50'} hover:shadow-lg transition-all duration-200 shadow-sm`}>
+            <Card className={`border border-border bg-card hover:shadow-lg transition-all duration-200 shadow-sm`}>
               <CardContent className="p-6">
                 <div className="flex items-center justify-between mb-4">
-                  <div className={`w-10 h-10 ${monthlyNetIncome >= 0 ? 'bg-green-100' : 'bg-red-100'} rounded-full flex items-center justify-center`}>
+                  <div className={`w-10 h-10 ${monthlyNetIncome >= 0 ? 'bg-green-100 dark:bg-green-900/20' : 'bg-red-100 dark:bg-red-900/20'} rounded-full flex items-center justify-center`}>
                     {monthlyNetIncome >= 0 ? 
-                      <TrendingUp className="h-5 w-5 text-green-600" /> : 
-                      <TrendingDown className="h-5 w-5 text-red-600" />
+                      <TrendingUp className="h-5 w-5 text-green-600 dark:text-green-400" /> : 
+                      <TrendingDown className="h-5 w-5 text-red-600 dark:text-red-400" />
                     }
                   </div>
-                  <span className={`text-2xl font-light ${monthlyNetIncome >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                  <span className={`text-2xl font-light ${monthlyNetIncome >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
                     {monthlyNetIncome >= 0 ? '+' : '-'}₹{Math.abs(monthlyNetIncome).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                   </span>
                 </div>
                 <div>
-                  <p className="text-gray-900 font-medium">Monthly Net</p>
-                  <p className="text-sm text-gray-500">{currentMonth}</p>
+                  <p className="text-foreground font-medium">Monthly Net</p>
+                  <p className="text-sm text-muted-foreground">{currentMonth}</p>
                 </div>
               </CardContent>
             </Card>
 
             {/* Income Ratio */}
-            <Card className="border border-blue-200 bg-gradient-to-br from-blue-50 to-indigo-50 hover:shadow-lg transition-all duration-200 shadow-sm">
+            <Card className="border border-border bg-card hover:shadow-lg transition-all duration-200 shadow-sm">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between mb-4">
-                  <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                    <BarChart3 className="h-5 w-5 text-blue-600" />
+                  <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900/20 rounded-full flex items-center justify-center">
+                    <BarChart3 className="h-5 w-5 text-blue-600 dark:text-blue-400" />
                   </div>
-                  <span className="text-2xl font-light text-blue-600">
+                  <span className="text-2xl font-light text-blue-600 dark:text-blue-400">
                     {totalIncome > 0 ? ((totalIncome / (totalIncome + totalExpenses)) * 100).toFixed(1) : 0}%
                   </span>
                 </div>
                 <div>
-                  <p className="text-gray-900 font-medium">Income Ratio</p>
-                  <p className="text-sm text-gray-500">Income vs total transactions</p>
+                  <p className="text-foreground font-medium">Income Ratio</p>
+                  <p className="text-sm text-muted-foreground">Income vs total transactions</p>
                 </div>
               </CardContent>
             </Card>
 
             {/* Burn Rate */}
-            <Card className="border border-orange-200 bg-gradient-to-br from-orange-50 to-amber-50 hover:shadow-lg transition-all duration-200 shadow-sm">
+            <Card className="border border-border bg-card hover:shadow-lg transition-all duration-200 shadow-sm">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between mb-4">
-                  <div className="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center">
-                    <DollarSign className="h-5 w-5 text-orange-600" />
+                  <div className="w-10 h-10 bg-orange-100 dark:bg-orange-900/20 rounded-full flex items-center justify-center">
+                    <DollarSign className="h-5 w-5 text-orange-600 dark:text-orange-400" />
                   </div>
-                  <span className="text-2xl font-light text-orange-600">
+                  <span className="text-2xl font-light text-orange-600 dark:text-orange-400">
                     ₹{(totalExpenses / Math.max(expenses.length, 1)).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                   </span>
                 </div>
                 <div>
-                  <p className="text-gray-900 font-medium">Burn Rate</p>
-                  <p className="text-sm text-gray-500">Average expense per transaction</p>
+                  <p className="text-foreground font-medium">Burn Rate</p>
+                  <p className="text-sm text-muted-foreground">Average expense per transaction</p>
                 </div>
               </CardContent>
             </Card>
@@ -376,8 +376,8 @@ export default function CashFlowPage() {
 
         {/* Cash Flow Chart */}
         <div className="mb-8">
-          <h2 className="text-lg font-medium text-gray-900 mb-6">Cash Flow Trend (Last 6 Months)</h2>
-          <Card className="border border-gray-200 bg-white shadow-md">
+          <h2 className="text-lg font-medium text-foreground mb-6">Cash Flow Trend (Last 6 Months)</h2>
+          <Card className="border border-border bg-card shadow-md">
             <CardContent className="p-6">
               <ResponsiveContainer width="100%" height={300}>
                 <LineChart
@@ -405,39 +405,39 @@ export default function CashFlowPage() {
 
         {/* Transaction Summary (Optional: detailed list of filtered transactions) */}
         <div className="mb-8">
-          <h2 className="text-lg font-medium text-gray-900 mb-6">Filtered Transactions</h2>
-          <Card className="border border-gray-200 bg-white shadow-md">
+          <h2 className="text-lg font-medium text-foreground mb-6">Filtered Transactions</h2>
+          <Card className="border border-border bg-card shadow-md">
             <CardContent className="p-0">
               {filteredTransactions.length > 0 ? (
-                <table className="min-w-full divide-y divide-gray-200">
-                  <thead className="bg-gray-50">
+                <table className="min-w-full divide-y divide-border">
+                  <thead className="bg-muted">
                     <tr>
-                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
-                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
-                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
-                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount (INR)</th>
-                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Date</th>
+                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Type</th>
+                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Category</th>
+                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Title</th>
+                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Amount (INR)</th>
+                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Status</th>
                     </tr>
                   </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
+                  <tbody className="bg-card divide-y divide-border">
                     {filteredTransactions.map((tx) => (
                       <tr key={tx.id}>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{format(new Date(tx.date), 'MMM dd, yyyy')}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm capitalize">{tx.type}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{allCategories.find(cat => cat.id === tx.category)?.name || 'N/A'}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{tx.title}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">₹{tx.inrAmount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm capitalize">{tx.status}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-foreground">{format(new Date(tx.date), 'MMM dd, yyyy')}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm capitalize text-foreground">{tx.type}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-foreground">{allCategories.find(cat => cat.id === tx.category)?.name || 'N/A'}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-foreground">{tx.title}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-foreground">₹{tx.inrAmount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm capitalize text-foreground">{tx.status}</td>
                       </tr>
                     ))}
                   </tbody>
                 </table>
               ) : (
-                <div className="text-center py-16 text-gray-500">
-                  <Target className="h-16 w-16 mx-auto mb-6 text-gray-300" />
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">No transactions match current filters</h3>
-                  <p className="text-sm text-gray-500 mb-6">Try adjusting your filter settings.</p>
+                <div className="text-center py-16 text-muted-foreground">
+                  <Target className="h-16 w-16 mx-auto mb-6 text-muted-foreground/30" />
+                  <h3 className="text-lg font-medium text-foreground mb-2">No transactions match current filters</h3>
+                  <p className="text-sm text-muted-foreground mb-6">Try adjusting your filter settings.</p>
                   <Button onClick={resetFilters}>Clear Filters</Button>
                 </div>
               )}

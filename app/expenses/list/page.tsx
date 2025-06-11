@@ -143,12 +143,12 @@ export default function ExpenseListPage() {
   const paidExpenses = expenses.filter(exp => exp.status === 'paid')
 
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-row">
+    <div className="min-h-screen bg-background flex flex-row">
       {/* Main Content */}
       <div className="flex-1 px-4 py-6 max-w-6xl mx-auto">
         {/* Page Title and Action Buttons */}
         <div className="mb-8 flex items-center justify-between">
-          <h1 className="text-2xl font-semibold text-gray-900">Expenses</h1>
+          <h1 className="text-2xl font-semibold text-foreground">Expenses</h1>
           <div className="flex space-x-3">
             <Dialog open={showExpenseForm} onOpenChange={setShowExpenseForm}>
               <DialogTrigger asChild>
@@ -252,14 +252,14 @@ export default function ExpenseListPage() {
         {/* All Expenses List - Main Table */}
         <div className="mb-10">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-lg font-medium text-gray-900">All Expenses</h2>
+            <h2 className="text-lg font-medium text-foreground">All Expenses</h2>
             <Button variant="ghost" size="sm" className="text-blue-600 hover:text-blue-700">
               View analytics
               <ChevronRight className="h-4 w-4 ml-1" />
             </Button>
           </div>
 
-          <Card className="border border-gray-200 bg-white shadow-md">
+          <Card className="border border-border bg-card shadow-md">
             <CardContent className="p-0">
               {filteredExpenses.length > 0 ? (
                 <ExpenseList
@@ -267,10 +267,10 @@ export default function ExpenseListPage() {
                   onEdit={handleEditExpense}
                 />
               ) : (
-                <div className="text-center py-16 text-gray-500">
-                  <Receipt className="h-16 w-16 mx-auto mb-6 text-gray-300" />
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">No expenses recorded yet</h3>
-                  <p className="text-sm text-gray-500 mb-6">Start tracking your expenses by adding your first record</p>
+                <div className="text-center py-16 text-muted-foreground">
+                  <Receipt className="h-16 w-16 mx-auto mb-6 text-muted-foreground/40" />
+                  <h3 className="text-lg font-medium text-foreground mb-2">No expenses recorded yet</h3>
+                  <p className="text-sm text-muted-foreground mb-6">Start tracking your expenses by adding your first record</p>
                   <Button 
                     onClick={handleAddExpense}
                     className="bg-red-600 hover:bg-red-700 text-white"
@@ -286,75 +286,75 @@ export default function ExpenseListPage() {
       </div>
 
       {/* Right Sidebar */}
-      <aside className="w-[340px] border-l bg-white/80 px-4 py-6 flex flex-col gap-8 overflow-y-auto sticky top-0 h-screen">
+      <aside className="w-[340px] border-l bg-card px-4 py-6 flex flex-col gap-8 overflow-y-auto sticky top-0 h-screen">
         {/* Summary Block */}
         <div className="mb-8">
           <div className="flex items-baseline space-x-2 mb-2">
-            <span className="text-5xl font-light text-red-600">
+            <span className="text-5xl font-light text-red-600 dark:text-red-400">
               ₹{totalExpenses.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
             </span>
             <Button variant="ghost" size="sm" className="p-1">
-              <ChevronRight className="h-4 w-4 text-gray-400" />
+              <ChevronRight className="h-4 w-4 text-muted-foreground" />
             </Button>
           </div>
-          <div className="flex items-center space-x-4 text-sm text-gray-500 mb-2">
+          <div className="flex items-center space-x-4 text-sm text-muted-foreground mb-2">
             <span>Total expenses</span>
-            <span className="text-red-600">+{expenses.length} records</span>
+            <span className="text-red-600 dark:text-red-400">+{expenses.length} records</span>
           </div>
         </div>
 
         {/* Summary Cards */}
         <div className="mb-4 space-y-4">
           {/* This Month */}
-          <Card className="border border-red-200 bg-gradient-to-br from-red-50 to-pink-50 hover:shadow-lg transition-all duration-200 shadow-sm">
+          <Card className="border border-border bg-card hover:shadow-lg transition-all duration-200 shadow-sm">
             <CardContent className="p-6">
               <div className="flex items-center justify-between mb-4">
-                <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
-                  <Receipt className="h-5 w-5 text-red-600" />
+                <div className="w-10 h-10 bg-red-100 dark:bg-red-900/20 rounded-full flex items-center justify-center">
+                  <Receipt className="h-5 w-5 text-red-600 dark:text-red-400" />
                 </div>
-                <span className="text-2xl font-light text-red-600">
+                <span className="text-2xl font-light text-red-600 dark:text-red-400">
                   ₹{monthlyExpenses.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                 </span>
               </div>
               <div>
-                <p className="text-gray-900 font-medium">This Month</p>
-                <p className="text-sm text-gray-500">{currentMonth}</p>
+                <p className="text-foreground font-medium">This Month</p>
+                <p className="text-sm text-muted-foreground">{currentMonth}</p>
               </div>
             </CardContent>
           </Card>
 
           {/* Pending Expenses */}
-          <Card className="border border-yellow-200 bg-gradient-to-br from-yellow-50 to-amber-50 hover:shadow-lg transition-all duration-200 shadow-sm">
+          <Card className="border border-border bg-card hover:shadow-lg transition-all duration-200 shadow-sm">
             <CardContent className="p-6">
               <div className="flex items-center justify-between mb-4">
-                <div className="w-10 h-10 bg-yellow-100 rounded-full flex items-center justify-center">
-                  <Receipt className="h-5 w-5 text-yellow-600" />
+                <div className="w-10 h-10 bg-yellow-100 dark:bg-yellow-900/20 rounded-full flex items-center justify-center">
+                  <Receipt className="h-5 w-5 text-yellow-600 dark:text-yellow-400" />
                 </div>
-                <span className="text-2xl font-light text-yellow-600">
-                  ₹{pendingExpenses.reduce((sum, exp) => sum + exp.inrAmount, 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                <span className="text-2xl font-light text-yellow-600 dark:text-yellow-400">
+                  ₹{pendingExpenses.reduce((sum: number, exp: Transaction) => sum + exp.inrAmount, 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                 </span>
               </div>
               <div>
-                <p className="text-gray-900 font-medium">Pending</p>
-                <p className="text-sm text-gray-500">{pendingExpenses.length} awaiting payment</p>
+                <p className="text-foreground font-medium">Pending</p>
+                <p className="text-sm text-muted-foreground">{pendingExpenses.length} awaiting payment</p>
               </div>
             </CardContent>
           </Card>
 
           {/* Paid Expenses */}
-          <Card className="border border-green-200 bg-gradient-to-br from-green-50 to-emerald-50 hover:shadow-lg transition-all duration-200 shadow-sm">
+          <Card className="border border-border bg-card hover:shadow-lg transition-all duration-200 shadow-sm">
             <CardContent className="p-6">
               <div className="flex items-center justify-between mb-4">
-                <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
-                  <Receipt className="h-5 w-5 text-green-600" />
+                <div className="w-10 h-10 bg-green-100 dark:bg-green-900/20 rounded-full flex items-center justify-center">
+                  <Receipt className="h-5 w-5 text-green-600 dark:text-green-400" />
                 </div>
-                <span className="text-2xl font-light text-green-600">
-                  ₹{paidExpenses.reduce((sum, exp) => sum + exp.inrAmount, 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                <span className="text-2xl font-light text-green-600 dark:text-green-400">
+                  ₹{paidExpenses.reduce((sum: number, exp: Transaction) => sum + exp.inrAmount, 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                 </span>
               </div>
               <div>
-                <p className="text-gray-900 font-medium">Paid</p>
-                <p className="text-sm text-gray-500">{paidExpenses.length} completed payments</p>
+                <p className="text-foreground font-medium">Paid</p>
+                <p className="text-sm text-muted-foreground">{paidExpenses.length} completed payments</p>
               </div>
             </CardContent>
           </Card>
@@ -362,27 +362,27 @@ export default function ExpenseListPage() {
 
         {/* Top Categories Section */}
         <div className="mb-4">
-          <h2 className="text-lg font-medium text-gray-900 mb-4">Top Categories</h2>
+          <h2 className="text-lg font-medium text-foreground mb-4">Top Categories</h2>
           <div className="grid grid-cols-2 gap-4">
             {expenseCategories.slice(0, 4).map((category) => {
-              const categoryExpenses = expenses.filter(exp => exp.category === category.id)
-              const categoryTotal = categoryExpenses.reduce((sum, exp) => sum + exp.inrAmount, 0)
+              const categoryExpenses = expenses.filter((exp: Transaction) => exp.category === category.id)
+              const categoryTotal = categoryExpenses.reduce((sum: number, exp: Transaction) => sum + exp.inrAmount, 0)
               return (
-                <Card key={category.id} className="border border-gray-200 bg-white hover:shadow-lg transition-all duration-200 cursor-pointer shadow-sm">
+                <Card key={category.id} className="border border-border bg-card hover:shadow-lg transition-all duration-200 cursor-pointer shadow-sm">
                   <CardContent className="p-3 text-center">
                     <div 
-                      className="w-8 h-8 rounded-full mx-auto mb-2 flex items-center justify-center"
-                      style={{ backgroundColor: category.color + '20' }}
+                      className="w-8 h-8 rounded-full mx-auto mb-2 flex items-center justify-center border-2"
+                      style={{ borderColor: category.color }}
                     >
                       <div 
                         className="w-4 h-4 rounded-full"
                         style={{ backgroundColor: category.color }}
                       />
                     </div>
-                    <p className="font-medium text-gray-900 text-xs mb-1 truncate" title={category.name}>
+                    <p className="font-medium text-foreground text-xs mb-1 truncate" title={category.name}>
                       {category.name}
                     </p>
-                    <p className="text-xs text-gray-500">₹{categoryTotal.toFixed(0)}</p>
+                    <p className="text-xs text-muted-foreground">₹{categoryTotal.toFixed(0)}</p>
                   </CardContent>
                 </Card>
               )
@@ -392,7 +392,7 @@ export default function ExpenseListPage() {
 
         {/* Analytics Link */}
         <div className="mt-auto">
-          <Button variant="ghost" size="sm" className="w-full text-blue-600 hover:text-blue-700" asChild>
+          <Button variant="ghost" size="sm" className="w-full text-blue-600 dark:text-blue-400 hover:text-blue-700" asChild>
             <a href="/expenses/analytics">
               View Analytics
               <ChevronRight className="h-4 w-4 ml-1" />

@@ -44,6 +44,8 @@ import { BusinessDetailsButton } from "@/components/business-details-button"
 import { CustomizeFieldsModal } from "@/components/customize-fields-modal";
 import { BankAccountSelectField } from "@/components/bank-account-select-field";
 import { VersionFooter } from "@/components/version-footer";
+import { InvoiceNotes } from '@/components/invoice-form/invoice-notes';
+import { LogoUpload } from '@/components/logo-upload';
 
 export default function Home() {
   const { businessDetails } = useBusinessDetails()
@@ -463,6 +465,9 @@ export default function Home() {
               <Card className="form-section">
                 <h2 className="text-xl font-semibold mb-6">Invoice Details</h2>
                 <div className="space-y-6">
+                  <div className="w-full">
+                    <LogoUpload />
+                  </div>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <FormField
                       control={form.control}
@@ -781,23 +786,7 @@ export default function Home() {
                 onRemoveItem={remove}
               />
 
-              <FormField
-                control={form.control}
-                name="notes"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Notes</FormLabel>
-                    <FormControl>
-                      <Textarea
-                        placeholder="Additional notes or terms..."
-                        className="resize-none"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              <InvoiceNotes form={form} />
 
               {activeFields.includes('bankDetails') && (
                 <FormField
